@@ -125,9 +125,18 @@
       box-shadow: 0 0 48px rgba(255,216,237,0.14);
       opacity: 0.9;
     }
-    .map-notice { display: grid; gap: 12px; padding: 18px 18px 12px; background: rgba(255,248,250,.95); border-radius: 0 0 0 24px; position: absolute; right: 18px; top: 18px; z-index: 999; width: min(360px, 92vw); box-shadow: 0 28px 60px rgba(185,57,108,.14); }
+    .map-notice { display: grid; gap: 12px; padding: 18px 18px 12px; background: rgba(255,248,250,.95); border-radius: 0 0 0 24px; position: absolute; right: 18px; top: 18px; z-index: 999; width: min(360px, 92vw); box-shadow: 0 28px 60px rgba(185,57,108,.14); transition: width .24s ease, padding .24s ease, opacity .24s ease; }
+    .map-notice-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .notice-toggle { border: 1px solid rgba(189,105,145,.2); background: #ffe8f2; color: #7d2f57; border-radius: 999px; padding: 8px 12px; font-size: .92rem; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+    .notice-toggle:hover { background: #ffd9ec; transform: translateY(-1px); }
     .map-notice strong { display: block; font-size: .98rem; color:#5f2c50; }
     .map-notice small { color:#7f5d78; line-height:1.6; }
+    .map-notice.collapsed { width: 220px; padding: 14px 14px 10px; }
+    .map-notice.collapsed small,
+    .map-notice.collapsed .map-legend,
+    .map-notice.collapsed .layer-controls { display: none; }
+    .map-notice.collapsed .map-notice-header { gap: 10px; }
+    .map-notice.collapsed strong::after { content: ' — click expand'; display: block; margin-top: 4px; font-size: .82rem; color: #8f5c74; }
     .map-legend { display: grid; gap: 10px; margin-top: 12px; }
     .legend-item { display: flex; align-items: center; gap: 10px; font-size: .92rem; color:#4a2c47; }
     .legend-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-grid; place-items: center; }
@@ -173,8 +182,11 @@
     <div class="panel active" id="map-panel">
       <div class="map-wrapper">
         <div id="map"></div>
-        <aside class="map-notice">
-          <strong>Interactive map guide</strong>
+        <aside class="map-notice" aria-expanded="true">
+          <div class="map-notice-header">
+            <strong>Interactive map guide</strong>
+            <button type="button" class="notice-toggle" aria-expanded="true">Minimise</button>
+          </div>
           <small>Hover pins and routes to see details. Use the checkboxes to toggle the categories. Click a list item “See on Map” to jump to the idea.</small>
           <div class="map-legend">
             <div class="legend-item"><span class="legend-dot airport-dot"></span> Airports / stops</div>
@@ -648,6 +660,17 @@
     });
 
     ideaSearch.addEventListener('input', updateSearchAndFilter);
+
+    const mapNotice = document.querySelector('.map-notice');
+    const noticeToggle = document.querySelector('.notice-toggle');
+    if (noticeToggle && mapNotice) {
+      noticeToggle.addEventListener('click', () => {
+        const collapsed = mapNotice.classList.toggle('collapsed');
+        noticeToggle.textContent = collapsed ? 'Expand' : 'Minimise';
+        noticeToggle.setAttribute('aria-expanded', String(!collapsed));
+        mapNotice.setAttribute('aria-expanded', String(!collapsed));
+      });
+    }
 
     document.querySelectorAll('.tab-button').forEach(button => {
       button.addEventListener('click', () => {
