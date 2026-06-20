@@ -16,7 +16,8 @@
           "rating": {
             "google": "4.5",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.7148,139.7967"
         },
         {
           "name": "Meiji Jingu Shrine",
@@ -32,7 +33,8 @@
           "rating": {
             "google": "4.6",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6764,139.6993"
         },
         {
           "name": "Shibuya Sky",
@@ -48,7 +50,8 @@
           "rating": {
             "google": "4.7",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6585,139.7018"
         },
         {
           "name": "teamLab Planets",
@@ -64,7 +67,8 @@
           "rating": {
             "google": "4.7",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6433,139.79"
         },
         {
           "name": "Shinjuku Gyoen National Garden",
@@ -80,7 +84,8 @@
           "rating": {
             "google": "4.6",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6852,139.7101"
         },
         {
           "name": "Tokyo Skytree",
@@ -96,7 +101,8 @@
           "rating": {
             "google": "4.5",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.7101,139.8107"
         },
         {
           "name": "Tsukiji Outer Market",
@@ -112,7 +118,8 @@
           "rating": {
             "google": "4.4",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6655,139.7702"
         },
         {
           "name": "Akihabara Electric Town",
@@ -128,7 +135,8 @@
           "rating": {
             "google": "4.3",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6997,139.7715"
         },
         {
           "name": "Harajuku & Takeshita Street",
@@ -144,7 +152,8 @@
           "rating": {
             "google": "4.0",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6702,139.7049"
         },
         {
           "name": "Ghibli Museum",
@@ -160,7 +169,8 @@
           "rating": {
             "google": "4.6",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6962,139.5704"
         }
       ],
       "hidden_gems": [
@@ -178,7 +188,8 @@
           "rating": {
             "google": "4.3",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6039,139.6464"
         },
         {
           "name": "Gotokuji Temple",
@@ -194,7 +205,8 @@
           "rating": {
             "google": "4.5",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.6482,139.6472"
         },
         {
           "name": "Nezu Shrine",
@@ -210,7 +222,8 @@
           "rating": {
             "google": "4.5",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.7202,139.7607"
         }
       ]
     },
@@ -230,7 +243,8 @@
           "rating": {
             "google": "4.6",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.2442,139.0513"
         },
         {
           "name": "Lake Ashi Sightseeing Cruise",
@@ -246,7 +260,8 @@
           "rating": {
             "google": "4.3",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.2014,139.0025"
         },
         {
           "name": "Owakudani Valley",
@@ -262,7 +277,8 @@
           "rating": {
             "google": "4.2",
             "tripadvisor": "4.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.2423,139.0191"
         }
       ],
       "hidden_gems": [
@@ -280,7 +296,8 @@
           "rating": {
             "google": "4.4",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.2631,139.0189"
         },
         {
           "name": "Choanji Temple",
@@ -296,7 +313,8 @@
           "rating": {
             "google": "4.4",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.2691,139.0102"
         }
       ]
     },
@@ -316,7 +334,8 @@
           "rating": {
             "google": "4.7",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=34.9671,135.7727"
         }
       ],
       "hidden_gems": [
@@ -334,7 +353,8 @@
           "rating": {
             "google": "4.5",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.0215,135.6682"
         },
         {
           "name": "Otagi Nenbutsu-ji Temple",
@@ -350,7 +370,8 @@
           "rating": {
             "google": "4.7",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=35.0289,135.6664"
         }
       ]
     },
@@ -370,7 +391,8 @@
           "rating": {
             "google": "4.8",
             "tripadvisor": "5.0"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=34.3927,132.4523"
         }
       ],
       "hidden_gems": [
@@ -388,7 +410,8 @@
           "rating": {
             "google": "4.7",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=34.4192,132.4361"
         }
       ]
     },
@@ -408,7 +431,8 @@
           "rating": {
             "google": "4.4",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=34.6687,135.5013"
         }
       ],
       "hidden_gems": [
@@ -426,7 +450,8 @@
           "rating": {
             "google": "4.4",
             "tripadvisor": "4.5"
-          }
+          },
+          "google_maps_link": "https://www.google.com/maps/search/?api=1&query=34.6681,135.5021"
         }
       ]
     }
