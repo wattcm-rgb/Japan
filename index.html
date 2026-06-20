@@ -379,6 +379,9 @@
             <div class="filter-buttons open" id="fullDataCategoryFilters">
               <button class="filter-button active" data-category="All" type="button">All categories</button>
             </div>
+            <div class="filter-buttons open" id="fullDataSubCategoryFilters" style="display:none;">
+              <button class="filter-button active" data-subcategory="All" type="button">All sub-categories</button>
+            </div>
           </div>
         </div>
         <input type="search" id="fullDataSearch" placeholder="Search the full dataset by name, city, category…" />
@@ -797,6 +800,7 @@
     const fullDataSearch = document.getElementById('fullDataSearch');
     const fullDataList = document.getElementById('fullDataList');
     const fullDataCategoryFilters = document.getElementById('fullDataCategoryFilters');
+    const fullDataSubCategoryFilters = document.getElementById('fullDataSubCategoryFilters');
     const fullDataCategoryToggle = document.getElementById('fullDataCategoryToggle');
     const fullDataCityFilters = document.getElementById('fullDataCityFilters');
     let selectedRestaurantCategory = 'All';
@@ -805,10 +809,12 @@
     let selectedAttractionCity = 'All';
     let selectedAnimalCafeCategory = 'All';
     let selectedAnimalCafeCity = 'All';
-    let selectedFullDataCategory = 'All';
+    let selectedFullDataPrimaryCategory = 'All';
+    let selectedFullDataSubCategory = 'All';
     let selectedFullDataCity = 'All';
 
     const preferredCityOrder = ['Tokyo', 'Hakone', 'Kyoto', 'Hiroshima', 'Osaka'];
+    const fullDataPrimaryCategories = ['Accomodation', 'Restaurants', 'Attractions', 'Ideas', 'Animal Cafes'];
     function sortCitiesByPreference(cities) {
       return [...cities].sort((a, b) => {
         const aIndex = preferredCityOrder.indexOf(a);
@@ -818,6 +824,31 @@
         if (aRank !== bRank) return aRank - bRank;
         return a.localeCompare(b);
       });
+    }
+
+    function getFullDataPrimaryCategory(item) {
+      if (item.type === 'Accommodation' || item.type === 'Event') return 'Accomodation';
+      if (item.type === 'Restaurant') return 'Restaurants';
+      if (item.type === 'Attraction') return 'Attractions';
+      if (item.type === 'Instagram Idea') return 'Ideas';
+      if (item.type === 'Animal Cafe') return 'Animal Cafes';
+      return 'Other';
+    }
+
+    function getFullDataSubCategory(item) {
+      if (item.type === 'Accommodation' || item.type === 'Event') return item.type;
+      if (item.type === 'Restaurant' || item.type === 'Attraction' || item.type === 'Animal Cafe') {
+        return item.category || item.type;
+      }
+      if (item.type === 'Instagram Idea') return 'Idea';
+      return item.category || item.type || 'Other';
+    }
+
+    function formatCategoryLabel(text) {
+      return String(text || '')
+        .split(' ')
+        .map(word => word ? word.charAt(0).toUpperCase() + word.slice(1) : word)
+        .join(' ');
     }
 
     function loadRestaurants() {
@@ -1021,6 +1052,9 @@
     }
 
     function renderRestaurants() {
+      const openGroups = new Set(
+        Array.from(restaurantsList.querySelectorAll('details.idea-group[open][data-group-key]')).map(el => el.dataset.groupKey)
+      );
       restaurantsList.innerHTML = '';
       const filteredRestaurants = restaurantsData
         .filter(item => (selectedRestaurantCategory === 'All' || item.category === selectedRestaurantCategory) &&
@@ -1039,7 +1073,8 @@
       sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
-        cityDetails.open = false;
+        cityDetails.dataset.groupKey = `city::${city}`;
+        cityDetails.open = openGroups.has(cityDetails.dataset.groupKey);
         const citySummary = document.createElement('summary');
         const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
         citySummary.innerHTML = `<span>${city}</span><span>${cityCount} restaurants</span>`;
@@ -1054,7 +1089,8 @@
             const items = cityGroups[city][suburb];
             const suburbDetails = document.createElement('details');
             suburbDetails.className = 'idea-group';
-            suburbDetails.open = false;
+            suburbDetails.dataset.groupKey = `suburb::${city}::${suburb || 'Various areas'}`;
+            suburbDetails.open = openGroups.has(suburbDetails.dataset.groupKey);
             const suburbSummary = document.createElement('summary');
             const label = suburb || 'Various areas';
             suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} restaurants</span>`;
@@ -1064,7 +1100,7 @@
               const card = document.createElement('article');
               card.className = 'idea-card';
               card.id = `restaurant-${item.id}`;
-              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
+              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait_time_walkin || item.approx_wait || item.wait || '';
               const _waitSearch = wait.toString();
               card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
               card.dataset.category = (item.category || '').toLowerCase();
@@ -1100,7 +1136,7 @@
             const card = document.createElement('article');
             card.className = 'idea-card';
             card.id = `restaurant-${item.id}`;
-            const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
+            const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait_time_walkin || item.approx_wait || item.wait || '';
             const _waitSearch = wait.toString();
             card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
             card.dataset.category = (item.category || '').toLowerCase();
@@ -1143,7 +1179,9 @@
           if (matches) visibleCount += 1;
         });
         group.style.display = visibleCount ? 'block' : 'none';
-        group.open = visibleCount > 0 && query !== '';
+        if (query !== '') {
+          group.open = visibleCount > 0;
+        }
       });
     }
 
@@ -1269,6 +1307,9 @@
     }
 
     function renderAttractions() {
+      const openGroups = new Set(
+        Array.from(attractionsList.querySelectorAll('details.idea-group[open][data-group-key]')).map(el => el.dataset.groupKey)
+      );
       attractionsList.innerHTML = '';
       const filteredAttractions = attractionsData
         .filter(item => (selectedAttractionCategory === 'All' || item.category === selectedAttractionCategory) &&
@@ -1284,7 +1325,8 @@
       sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
-        cityDetails.open = false;
+        cityDetails.dataset.groupKey = `city::${city}`;
+        cityDetails.open = openGroups.has(cityDetails.dataset.groupKey);
         const citySummary = document.createElement('summary');
         citySummary.innerHTML = `<span>${city}</span><span>${cityGroups[city].length} attractions</span>`;
         cityDetails.appendChild(citySummary);
@@ -1330,7 +1372,9 @@
           if (matches) visibleCount += 1;
         });
         group.style.display = visibleCount ? 'block' : 'none';
-        group.open = visibleCount > 0 && query !== '';
+        if (query !== '') {
+          group.open = visibleCount > 0;
+        }
       });
     }
 
@@ -1399,6 +1443,9 @@
     }
 
     function renderAnimalCafes() {
+      const openGroups = new Set(
+        Array.from(animalCafeList.querySelectorAll('details.idea-group[open][data-group-key]')).map(el => el.dataset.groupKey)
+      );
       animalCafeList.innerHTML = '';
       const filteredCafes = animalCafesData
         .filter(item => (selectedAnimalCafeCategory === 'All' || item.category === selectedAnimalCafeCategory) &&
@@ -1412,7 +1459,8 @@
       sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
-        cityDetails.open = false;
+        cityDetails.dataset.groupKey = `city::${city}`;
+        cityDetails.open = openGroups.has(cityDetails.dataset.groupKey);
         const citySummary = document.createElement('summary');
         citySummary.innerHTML = `<span>${city}</span><span>${cityGroups[city].length} cafes</span>`;
         cityDetails.appendChild(citySummary);
@@ -1458,7 +1506,9 @@
           if (matches) visibleCount += 1;
         });
         group.style.display = visibleCount ? 'block' : 'none';
-        group.open = visibleCount > 0 && query !== '';
+        if (query !== '') {
+          group.open = visibleCount > 0;
+        }
       });
     }
 
@@ -1495,17 +1545,22 @@
           fullDataCityFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
           selectedFullDataCity = button.dataset.city;
+          selectedFullDataPrimaryCategory = 'All';
+          selectedFullDataSubCategory = 'All';
           buildFullDataCategoryFilters();
+          buildFullDataSubCategoryFilters();
           renderFullData();
           updateFullDataSearch();
         });
       });
 
-      const categories = Array.from(new Set(fullData
-        .filter(i => selectedFullDataCity === 'All' || i.city === selectedFullDataCity)
-        .map(item => item.category || item.type || 'Other'))).sort((a, b) => a.localeCompare(b));
+      buildFullDataCategoryFilters();
+      buildFullDataSubCategoryFilters();
+    }
+
+    function buildFullDataCategoryFilters() {
       fullDataCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
-      categories.forEach(category => {
+      fullDataPrimaryCategories.forEach(category => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'filter-button';
@@ -1517,31 +1572,47 @@
         button.addEventListener('click', () => {
           fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
-          selectedFullDataCategory = button.dataset.category;
+          selectedFullDataPrimaryCategory = button.dataset.category;
+          selectedFullDataSubCategory = 'All';
+          buildFullDataSubCategoryFilters();
           renderFullData();
           updateFullDataSearch();
         });
       });
     }
 
-    function buildFullDataCategoryFilters() {
-      const categories = Array.from(new Set(fullData
-        .filter(i => selectedFullDataCity === 'All' || i.city === selectedFullDataCity)
-        .map(item => item.category || item.type || 'Other'))).sort((a, b) => a.localeCompare(b));
-      fullDataCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
-      categories.forEach(category => {
+    function buildFullDataSubCategoryFilters() {
+      const subCategories = Array.from(new Set(fullData
+        .filter(i => (selectedFullDataCity === 'All' || i.city === selectedFullDataCity) &&
+                     (selectedFullDataPrimaryCategory === 'All' || i.primaryCategory === selectedFullDataPrimaryCategory))
+        .map(item => item.subCategory)
+        .filter(Boolean))).sort((a, b) => a.localeCompare(b));
+
+      const shouldShow = selectedFullDataPrimaryCategory !== 'All' && subCategories.length > 1;
+      if (!shouldShow) {
+        fullDataSubCategoryFilters.style.display = 'none';
+        fullDataSubCategoryFilters.dataset.visible = 'false';
+        fullDataSubCategoryFilters.innerHTML = '';
+        return;
+      }
+
+      fullDataSubCategoryFilters.style.display = 'flex';
+      fullDataSubCategoryFilters.dataset.visible = 'true';
+      fullDataSubCategoryFilters.innerHTML = '<button class="filter-button active" data-subcategory="All" type="button">All sub-categories</button>';
+      subCategories.forEach(subCategory => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'filter-button';
-        button.dataset.category = category;
-        button.textContent = category;
-        fullDataCategoryFilters.appendChild(button);
+        button.dataset.subcategory = subCategory;
+        button.textContent = formatCategoryLabel(subCategory);
+        fullDataSubCategoryFilters.appendChild(button);
       });
-      fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+
+      fullDataSubCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
         button.addEventListener('click', () => {
-          fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          fullDataSubCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
           button.classList.add('active');
-          selectedFullDataCategory = button.dataset.category;
+          selectedFullDataSubCategory = button.dataset.subcategory;
           renderFullData();
           updateFullDataSearch();
         });
@@ -1553,7 +1624,7 @@
       fullData = fullData.concat(
         accommodations
           .filter(item => ['Accommodation', 'Event'].includes(item.category))
-          .map(item => ({ ...item, type: item.category, category: item.category, title: item.title, detail: item.details || item.detail, link: item.link }))
+          .map(item => ({ ...item, type: item.category, category: item.category, title: item.title, detail: item.details || item.detail, link: item.link, primaryCategory: 'Accomodation', subCategory: item.category }))
       );
       fullData = fullData.concat(instagramIdeas.map(item => ({
         ...item,
@@ -1561,7 +1632,9 @@
         category: 'Instagram Idea',
         title: item.title,
         detail: item.description,
-        link: item.link
+        link: item.link,
+        primaryCategory: 'Ideas',
+        subCategory: 'Idea'
       })));
       fullData = fullData.concat(restaurantsData.map(item => ({
         ...item,
@@ -1569,7 +1642,9 @@
         category: item.category || 'Restaurant',
         title: item.title || item.name,
         detail: item.description || item.detail,
-        link: item.google_maps_link || item.link
+        link: item.google_maps_link || item.link,
+        primaryCategory: 'Restaurants',
+        subCategory: item.category || 'Restaurant'
       })));
       fullData = fullData.concat(attractionsData.map(item => ({
         ...item,
@@ -1577,7 +1652,9 @@
         category: item.category || 'Attraction',
         title: item.title || item.name,
         detail: item.description || item.detail,
-        link: item.link || item.website
+        link: item.link || item.website,
+        primaryCategory: 'Attractions',
+        subCategory: item.category || 'Attraction'
       })));
       fullData = fullData.concat(animalCafesData.map(item => ({
         ...item,
@@ -1585,15 +1662,21 @@
         category: item.category || 'Animal Cafe',
         title: item.title || item.name,
         detail: item.description || item.detail,
-        link: item.link || item.website
+        link: item.link || item.website,
+        primaryCategory: 'Animal Cafes',
+        subCategory: item.category || 'Animal Cafe'
       })));
       buildFullDataFilters();
     }
 
     function renderFullData() {
+      const openGroups = new Set(
+        Array.from(fullDataList.querySelectorAll('details.idea-group[open][data-group-key]')).map(el => el.dataset.groupKey)
+      );
       fullDataList.innerHTML = '';
       const filteredItems = fullData
-        .filter(item => (selectedFullDataCategory === 'All' || (item.category || item.type) === selectedFullDataCategory) &&
+        .filter(item => (selectedFullDataPrimaryCategory === 'All' || item.primaryCategory === selectedFullDataPrimaryCategory) &&
+                        (selectedFullDataSubCategory === 'All' || item.subCategory === selectedFullDataSubCategory) &&
                         (selectedFullDataCity === 'All' || item.city === selectedFullDataCity));
 
       // Map types to standardized groups
@@ -1620,7 +1703,8 @@
       sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
-        cityDetails.open = false;
+        cityDetails.dataset.groupKey = `city::${city}`;
+        cityDetails.open = openGroups.has(cityDetails.dataset.groupKey);
         const citySummary = document.createElement('summary');
         const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
         citySummary.innerHTML = `<span>${city}</span><span>${cityCount} items</span>`;
@@ -1631,7 +1715,8 @@
           if (!cityGroups[city][group]) return;
           const categoryDetails = document.createElement('details');
           categoryDetails.className = 'idea-group';
-          categoryDetails.open = false;
+          categoryDetails.dataset.groupKey = `group::${city}::${group}`;
+          categoryDetails.open = openGroups.has(categoryDetails.dataset.groupKey);
           const categorySummary = document.createElement('summary');
           categorySummary.innerHTML = `<span>${group}</span><span>${cityGroups[city][group].length}</span>`;
           categoryDetails.appendChild(categorySummary);
@@ -1645,7 +1730,7 @@
 
             const extraFields = [];
             if (item.type === 'Restaurant') {
-              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
+              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait_time_walkin || item.approx_wait || item.wait || '';
               extraFields.push(`<div class="restaurant-field">Approx wait: ${wait}</div>`);
               extraFields.push(`<div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>`);
               extraFields.push(`<div class="restaurant-field">Cost: ${item.cost_approx || item.cost || ''}</div>`);
@@ -1711,7 +1796,9 @@
           if (matches) visibleCount += 1;
         });
         group.style.display = visibleCount ? 'block' : 'none';
-        group.open = visibleCount > 0 && query !== '';
+        if (query !== '') {
+          group.open = visibleCount > 0;
+        }
       });
     }
 
@@ -1757,6 +1844,13 @@
       if (fullDataCategoryToggle) {
         fullDataCategoryToggle.addEventListener('click', () => {
           const expanded = fullDataCategoryFilters.classList.toggle('open');
+          if (fullDataSubCategoryFilters) {
+            if (expanded && fullDataSubCategoryFilters.dataset.visible === 'true') {
+              fullDataSubCategoryFilters.classList.add('open');
+            } else {
+              fullDataSubCategoryFilters.classList.remove('open');
+            }
+          }
           fullDataCategoryToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         });
       }
