@@ -55,7 +55,6 @@
       filter: drop-shadow(0 0 10px rgba(255,255,255,0.28));
     }
     .custom-marker { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; color: #fff; font-size: 1.5rem; font-weight: 800; box-shadow: 0 0 0 4px rgba(255,255,255,.9); border: 2px solid #fff; }
-    .airport-marker { background: #bc6787; }
     .hotel-marker { background: #d3598f; }
     .event-marker { background: #9f4f7b; }
     .idea-marker { background: #f0a7c8; }
@@ -154,14 +153,12 @@
     .map-legend { display: grid; gap: 10px; margin-top: 12px; }
     .legend-item { display: flex; align-items: center; gap: 10px; font-size: .92rem; color:#4a2c47; }
     .legend-dot { width: 14px; height: 14px; border-radius: 50%; display: inline-grid; place-items: center; }
-    .airport-dot { background: #bc6787; }
     .hotel-dot { background: #d3598f; }
     .event-dot { background: #9f4f7b; }
     .idea-dot { background: #f0a7c8; }
     .restaurant-dot { background: #f57da3; }
     .attraction-dot { background: #8eb9d4; }
     .animal-dot { background: #95c46b; }
-    .route-dot { background: #d95c97; }
     .leaflet-container { background: #eef4fb; }
     .custom-popup { font-family: Inter,system-ui,sans-serif; font-size: 0.94rem; line-height: 1.5; color: #3b2035; }
     .custom-popup h4 { margin: 0 0 8px; font-size: 1rem; color: #5a214d; }
@@ -211,18 +208,15 @@
           </div>
           <small>Hover pins and routes to see details. Use the checkboxes to toggle the categories. Click a list item “See on Map” to jump to the idea.</small>
           <div class="map-legend">
-            <div class="legend-item"><span class="legend-dot airport-dot"></span> Airports / stops</div>
             <div class="legend-item"><span class="legend-dot hotel-dot"></span> Accommodation</div>
             <div class="legend-item"><span class="legend-dot event-dot"></span> Booked events</div>
-            <div class="legend-item"><span class="legend-dot route-dot"></span> Train route</div>
             <div class="legend-item"><span class="legend-dot idea-dot"></span> Instagram idea</div>
             <div class="legend-item"><span class="legend-dot restaurant-dot"></span> Restaurants</div>
             <div class="legend-item"><span class="legend-dot attraction-dot"></span> Attractions</div>
             <div class="legend-item"><span class="legend-dot animal-dot"></span> Animal cafes</div>
           </div>
           <div class="layer-controls">
-            <label><input type="checkbox" checked id="layer-accommodation" /> Show airports / accommodation / events</label>
-            <label><input type="checkbox" checked id="layer-trains" /> Show train routes</label>
+            <label><input type="checkbox" checked id="layer-accommodation" /> Show accommodation / events</label>
             <label><input type="checkbox" checked id="layer-ideas" /> Show Instagram ideas</label>
             <label><input type="checkbox" checked id="layer-restaurants" /> Show restaurants</label>
             <label><input type="checkbox" checked id="layer-attractions" /> Show attractions</label>
@@ -365,22 +359,6 @@
       }
     ];
 
-    const airports = [
-      { id:'lhr', title:'London Heathrow Airport', city:'London', suburb:'Heathrow', lat:51.4700, lng:-0.4543, details:'Watts departure airport per itinerary.', category:'Airport', link:'https://www.heathrow.com/' },
-      { id:'ams', title:'Amsterdam Schiphol Airport', city:'Amsterdam', suburb:'Schiphol', lat:52.3105, lng:4.7683, details:'Pollards departure airport per itinerary.', category:'Airport', link:'https://www.schiphol.nl/en/' },
-      { id:'narita', title:'Tokyo Arrival (Narita / estimate)', city:'Tokyo', suburb:'Narita', lat:35.7767, lng:140.3188, details:'Inbound Japan arrival airport estimated for mapping.', category:'Airport', link:'https://www.narita-airport.jp/' },
-      { id:'kix', title:'Kansai International Airport', city:'Osaka', suburb:'Kansai', lat:34.4342, lng:135.2440, details:'Osaka departure airport in the itinerary.', category:'Airport', link:'https://www.kansai-airport.or.jp/' },
-      { id:'hkg', title:'Hong Kong International Airport', city:'Hong Kong', suburb:'Chek Lap Kok', lat:22.3080, lng:113.9185, details:'Flight connection shown in the PDF itinerary.', category:'Airport', link:'https://www.hongkongairport.com/' }
-    ];
-
-    const trainRoutes = [
-      { id:'tokyo-hakone', from:'Tokyo station', to:'Hakone-Yumoto station', date:'16 Jul 2026', type:'Romance Car', path:[ [35.6812,139.7671], [35.2390,139.0258] ], color:'#e6a0c9', details:'Tokyo → Hakone route booked as Romance Car.', leg:'Tokyo' },
-      { id:'hakone-odawara', from:'Hakone-Yumoto station', to:'Odawara station', date:'17 Jul 2026', type:'Romance Car', path:[ [35.2390,139.0258], [35.2556,139.1596] ], color:'#f6c1d9', details:'Hakone → Odawara continuation on Romance Car.', leg:'Hakone' },
-      { id:'odawara-kyoto', from:'Odawara station', to:'Kyoto station', date:'17 Jul 2026', type:'Shinkansen', path:[ [35.2556,139.1596], [34.9855,135.7580] ], color:'#d86b9b', details:'Odawara → Kyoto Shinkansen connection.', leg:'Kyoto' },
-      { id:'kyoto-hiroshima', from:'Kyoto station', to:'Hiroshima station', date:'19 Jul 2026', type:'Shinkansen', path:[ [34.9855,135.7580], [34.3970,132.4750] ], color:'#c94a83', details:'Kyoto → Hiroshima Shinkansen route.', leg:'Hiroshima' },
-      { id:'hiroshima-osaka', from:'Hiroshima station', to:'Shin-Osaka station', date:'21 Jul 2026', type:'Shinkansen', path:[ [34.3970,132.4750], [34.7337,135.5002] ], color:'#b83a6f', details:'Hiroshima → Osaka Shinkansen route.', leg:'Osaka' }
-    ];
-
     const instagramIdeas = [
       {
         id:'yadokari-namba', title:'Yadokari Namba Vintage Market', city:'Osaka', suburb:'Namba', description:'Vintage watches, film cameras, pop culture collectibles and antiques in a compact Namba shopping market.', age:'All Ages', cost:'£0+ purchases', link:'https://www.instagram.com/reel/DZUTaePp-Dq/?id=3914839358156824810_75527033914', lat:34.6649, lng:135.5013,
@@ -505,7 +483,6 @@
     }).addTo(map);
 
     const accommodationLayer = L.layerGroup().addTo(map);
-    const trainLayer = L.layerGroup().addTo(map);
     const ideasLayer = L.layerGroup().addTo(map);
     const restaurantsLayer = L.layerGroup().addTo(map);
     const attractionsLayer = L.layerGroup().addTo(map);
@@ -515,7 +492,6 @@
     const animalCafesData = [];
 
     const iconStyles = {
-      Airport: { class:'airport-marker', symbol:'✈' },
       Accommodation: { class:'hotel-marker', symbol:'🛌' },
       Event: { class:'event-marker', symbol:'★' },
       Idea: { class:'idea-marker', symbol:'•' },
@@ -548,19 +524,23 @@
       lines.push('<div class="popup-badge"><span>' + secureHtml(item.category || item.type || 'Info') + '</span>');
       if (item.cuisine_type) lines.push(`<span>${secureHtml(item.cuisine_type)}</span>`);
       if (item.city) lines.push(`<span>${secureHtml(item.city)}</span>`);
-      if (item.suburb) lines.push(`<span>${secureHtml(item.suburb)}</span>`);
       lines.push('</div>');
       if (item.dates) lines.push(`<div><strong>When:</strong> ${secureHtml(item.dates)}</div>`);
-      if (item.cost || item.cost_approx) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost || item.cost_approx)}</div>`);
+      if (item.approx_cost) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.approx_cost)}</div>`);
+      if (item.cost_approx) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost_approx)}</div>`);
+      if (item.cost) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost)}</div>`);
       if (item.tabelog_rating) lines.push(`<div><strong>Rating:</strong> ${secureHtml(item.tabelog_rating)}</div>`);
-      // Approx wait time (accept multiple possible property names)
-      const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait;
+      const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait;
       if (wait) lines.push(`<div><strong>Approx wait:</strong> ${secureHtml(wait)}</div>`);
       if (item.table_for_9_likelihood) lines.push(`<div><strong>Group booking:</strong> ${secureHtml(item.table_for_9_likelihood)}</div>`);
+      if (item.booking_requirement) lines.push(`<div><strong>Booking:</strong> ${secureHtml(item.booking_requirement)}</div>`);
+      if (item.animals && item.animals.length) lines.push(`<div><strong>Animals:</strong> ${secureHtml(item.animals.join(', '))}</div>`);
+      if (item.rating && item.rating.google) lines.push(`<div><strong>Google rating:</strong> ${secureHtml(item.rating.google)}</div>`);
       lines.push(`<div style="margin:10px 0;">${secureHtml(item.detail || item.details || item.description || 'No extra details.')}</div>`);
       if (item.link) lines.push(`<div><a href="${secureHtml(item.link)}" target="_blank" rel="noreferrer">Open link</a></div>`);
+      if (item.website && item.website !== item.link) lines.push(`<div><a href="${secureHtml(item.website)}" target="_blank" rel="noreferrer">Website</a></div>`);
       if (item.tabelog_link) lines.push(`<div><a href="${secureHtml(item.tabelog_link)}" target="_blank" rel="noreferrer">Tabelog page</a></div>`);
-      if (item.google_maps_link) lines.push(`<div><a href="${secureHtml(item.google_maps_link)}" target="_blank" rel="noreferrer">Google Maps</a></div>`);
+      if (item.google_maps_link || item.google_map_link) lines.push(`<div><a href="${secureHtml(item.google_maps_link || item.google_map_link)}" target="_blank" rel="noreferrer">Google Maps</a></div>`);
       lines.push('</div>');
       return lines.join('');
     }
@@ -619,9 +599,9 @@
       });
     }
 
-    airports.concat(accommodations).forEach(item => {
+    accommodations.forEach(item => {
       const marker = L.marker([item.lat, item.lng], { icon: createIcon(item.category || item.type) });
-      marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+      marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
       bindHoverPopup(marker);
       marker.addTo(accommodationLayer);
     });
@@ -629,7 +609,7 @@
     function addRestaurantMarkers() {
       restaurantsData.forEach(item => {
         const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Restaurant') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
         bindHoverPopup(marker);
         marker.addTo(restaurantsLayer);
         item.marker = marker;
@@ -639,7 +619,7 @@
     function addAttractionMarkers() {
       attractionsData.forEach(item => {
         const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Attraction') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
         bindHoverPopup(marker);
         marker.addTo(attractionsLayer);
         item.marker = marker;
@@ -649,29 +629,16 @@
     function addAnimalCafeMarkers() {
       animalCafesData.forEach(item => {
         const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Animal Cafe') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
         bindHoverPopup(marker);
         marker.addTo(animalCafesLayer);
         item.marker = marker;
       });
     }
 
-    // Keep references to train polylines so we can highlight by selected leg
-    const trainLines = [];
-    trainRoutes.forEach(route => {
-      const line = L.polyline(route.path, { color: route.color, weight: 7, opacity: 0.95, dashArray:'14,10' });
-      const popupHtml = `<div class="custom-popup"><h4>${secureHtml(route.type)}</h4><div class="popup-badge"><span>${secureHtml(route.from)}</span><span>→</span><span>${secureHtml(route.to)}</span></div><div style="margin-top:8px;">${secureHtml(route.date)} · ${secureHtml(route.details)}</div></div>`;
-      line.bindPopup(popupHtml,{closeButton:false});
-      line.on('mouseover', () => line.openPopup());
-      line.on('mouseout', () => line.closePopup());
-      line.addTo(trainLayer);
-      route._line = line;
-      trainLines.push({ route, line });
-    });
-
     instagramIdeas.forEach(idea => {
       const marker = L.marker([idea.lat, idea.lng], { icon: createIcon('Idea') });
-      marker.bindPopup(buildPopup(idea), { closeButton:false, offset:[0,-24] });
+      marker.bindPopup(buildPopup(idea), { closeButton:false, offset:[0,-24], autoPan:false });
       bindHoverPopup(marker);
       marker.addTo(ideasLayer);
       idea.marker = marker;
@@ -700,10 +667,6 @@
     document.getElementById('layer-accommodation').addEventListener('change', event => {
       if (event.target.checked) map.addLayer(accommodationLayer);
       else map.removeLayer(accommodationLayer);
-    });
-    document.getElementById('layer-trains').addEventListener('change', event => {
-      if (event.target.checked) map.addLayer(trainLayer);
-      else map.removeLayer(trainLayer);
     });
     document.getElementById('layer-ideas').addEventListener('change', event => {
       if (event.target.checked) map.addLayer(ideasLayer);
@@ -955,11 +918,11 @@
         .filter(item => (selectedRestaurantCategory === 'All' || item.category === selectedRestaurantCategory) &&
                         (selectedRestaurantCity === 'All' || item.city === selectedRestaurantCity));
 
-      // Group by city, then by suburb
+      // Group by city, then by suburb only for Tokyo and Osaka
       const cityGroups = {};
       filteredRestaurants.forEach(item => {
         const city = item.city || 'Unknown';
-        const suburb = item.suburb || '';
+        const suburb = (city === 'Tokyo' || city === 'Osaka') ? (item.suburb || '') : '';
         cityGroups[city] = cityGroups[city] || {};
         cityGroups[city][suburb] = cityGroups[city][suburb] || [];
         cityGroups[city][suburb].push(item);
@@ -968,32 +931,36 @@
       Object.keys(cityGroups).sort().forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
-        cityDetails.open = false; // start collapsed
+        cityDetails.open = false;
         const citySummary = document.createElement('summary');
         const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
         citySummary.innerHTML = `<span>${city}</span><span>${cityCount} restaurants</span>`;
         cityDetails.appendChild(citySummary);
 
-        // For each suburb under the city
-        Object.keys(cityGroups[city]).sort().forEach(suburb => {
-          const items = cityGroups[city][suburb];
-          const suburbDetails = document.createElement('details');
-          suburbDetails.className = 'idea-group';
-          suburbDetails.open = false; // collapsed by default
-          const suburbSummary = document.createElement('summary');
-          const label = suburb || 'Various areas';
-          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} restaurants</span>`;
-          suburbDetails.appendChild(suburbSummary);
+        const suburbs = Object.keys(cityGroups[city]).sort();
+        const hasSuburbs = suburbs.length > 1 || (suburbs.length === 1 && suburbs[0] !== '');
 
-          items.forEach(item => {
-            const card = document.createElement('article');
-            card.className = 'idea-card';
-            card.id = `restaurant-${item.id}`;
-            const _waitSearch = (item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '').toString();
-            card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
-            card.dataset.category = (item.category || '').toLowerCase();
-            const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '';
-            card.innerHTML = `
+        if (hasSuburbs && (city === 'Tokyo' || city === 'Osaka')) {
+          // Show suburb level
+          suburbs.forEach(suburb => {
+            const items = cityGroups[city][suburb];
+            const suburbDetails = document.createElement('details');
+            suburbDetails.className = 'idea-group';
+            suburbDetails.open = false;
+            const suburbSummary = document.createElement('summary');
+            const label = suburb || 'Various areas';
+            suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} restaurants</span>`;
+            suburbDetails.appendChild(suburbSummary);
+
+            items.forEach(item => {
+              const card = document.createElement('article');
+              card.className = 'idea-card';
+              card.id = `restaurant-${item.id}`;
+              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
+              const _waitSearch = wait.toString();
+              card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
+              card.dataset.category = (item.category || '').toLowerCase();
+              card.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                 <div>
                   <h3>${item.name}</h3>
@@ -1013,11 +980,45 @@
               <p class="restaurant-desc">${item.description || ''}</p>
               <div class="idea-actions"><button type="button" onclick="focusOnRestaurant('${item.id}')">See on Map</button></div>
             `;
-            suburbDetails.appendChild(card);
-          });
+              suburbDetails.appendChild(card);
+            });
 
-          cityDetails.appendChild(suburbDetails);
-        });
+            cityDetails.appendChild(suburbDetails);
+          });
+        } else {
+          // No suburb level, show items directly
+          const allItems = Object.values(cityGroups[city]).flat();
+          allItems.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'idea-card';
+            card.id = `restaurant-${item.id}`;
+            const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
+            const _waitSearch = wait.toString();
+            card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
+            card.dataset.category = (item.category || '').toLowerCase();
+            card.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <h3>${item.name}</h3>
+                  <div class="idea-meta"><span>${item.category}</span><span>${item.cuisine_type}</span><span>${item.city}</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                  <a href="${item.google_maps_link || '#'}" target="_blank" rel="noreferrer">Map</a>
+                  ${item.tabelog_link ? `<a href="${item.tabelog_link}" target="_blank" rel="noreferrer">Tabelog</a>` : ''}
+                </div>
+              </div>
+              <div class="restaurant-fields">
+                <div class="restaurant-field">Cost: ${item.cost_approx || ''}</div>
+                <div class="restaurant-field">Rating: ${item.tabelog_rating || ''}</div>
+                <div class="restaurant-field">Approx wait: ${wait}</div>
+                <div class="restaurant-field">Group booking: ${item.table_for_9_likelihood || ''}</div>
+              </div>
+              <p class="restaurant-desc">${item.description || ''}</p>
+              <div class="idea-actions"><button type="button" onclick="focusOnRestaurant('${item.id}')">See on Map</button></div>
+            `;
+            cityDetails.appendChild(card);
+          });
+        }
 
         restaurantsList.appendChild(cityDetails);
       });
@@ -1168,10 +1169,8 @@
       const cityGroups = {};
       filteredAttractions.forEach(item => {
         const city = item.city || 'Unknown';
-        const suburb = item.suburb || '';
-        cityGroups[city] = cityGroups[city] || {};
-        cityGroups[city][suburb] = cityGroups[city][suburb] || [];
-        cityGroups[city][suburb].push(item);
+        cityGroups[city] = cityGroups[city] || [];
+        cityGroups[city].push(item);
       });
 
       Object.keys(cityGroups).sort().forEach(city => {
@@ -1179,47 +1178,33 @@
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
         const citySummary = document.createElement('summary');
-        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
-        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} attractions</span>`;
+        citySummary.innerHTML = `<span>${city}</span><span>${cityGroups[city].length} attractions</span>`;
         cityDetails.appendChild(citySummary);
 
-        Object.keys(cityGroups[city]).sort().forEach(suburb => {
-          const items = cityGroups[city][suburb];
-          const suburbDetails = document.createElement('details');
-          suburbDetails.className = 'idea-group';
-          suburbDetails.open = false;
-          const suburbSummary = document.createElement('summary');
-          const label = suburb || 'Various areas';
-          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} attractions</span>`;
-          suburbDetails.appendChild(suburbSummary);
-
-          items.forEach(item => {
-            const card = document.createElement('article');
-            card.className = 'idea-card';
-            card.id = `attraction-${item.id}`;
-            card.dataset.search = [item.name, item.city, item.suburb, item.category, item.description, item.booking_requirement].join(' ').toLowerCase();
-            card.dataset.category = (item.category || '').toLowerCase();
-            card.innerHTML = `
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-                <div>
-                  <h3>${item.name}</h3>
-                  <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.suburb}</span><span>${item.approx_cost || ''}</span></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
-                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
-                </div>
+        cityGroups[city].forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'idea-card';
+          card.id = `attraction-${item.id}`;
+          card.dataset.search = [item.name, item.city, item.category, item.description, item.booking_requirement].join(' ').toLowerCase();
+          card.dataset.category = (item.category || '').toLowerCase();
+          card.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div>
+                <h3>${item.name}</h3>
+                <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.approx_cost || ''}</span></div>
               </div>
-              <p class="restaurant-desc">${item.description || item.detail || ''}</p>
-              <div class="restaurant-fields">
-                <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
-                <div class="restaurant-field">Cost: ${item.approx_cost || ''}</div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
               </div>
-              <div class="idea-actions"><button type="button" onclick="focusOnAttraction('${item.id}')">See on Map</button></div>
-            `;
-            suburbDetails.appendChild(card);
-          });
-
-          cityDetails.appendChild(suburbDetails);
+            </div>
+            <p class="restaurant-desc">${item.description || item.detail || ''}</p>
+            <div class="restaurant-fields">
+              <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
+              <div class="restaurant-field">Cost: ${item.approx_cost || ''}</div>
+            </div>
+            <div class="idea-actions"><button type="button" onclick="focusOnAttraction('${item.id}')">See on Map</button></div>
+          `;
+          cityDetails.appendChild(card);
         });
 
         attractionsList.appendChild(cityDetails);
@@ -1311,55 +1296,43 @@
       const cityGroups = {};
       filteredCafes.forEach(item => {
         const city = item.city || 'Unknown';
-        const suburb = item.suburb || '';
-        cityGroups[city] = cityGroups[city] || {};
-        cityGroups[city][suburb] = cityGroups[city][suburb] || [];
-        cityGroups[city][suburb].push(item);
+        cityGroups[city] = cityGroups[city] || [];
+        cityGroups[city].push(item);
       });
       Object.keys(cityGroups).sort().forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
         const citySummary = document.createElement('summary');
-        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
-        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} cafes</span>`;
+        citySummary.innerHTML = `<span>${city}</span><span>${cityGroups[city].length} cafes</span>`;
         cityDetails.appendChild(citySummary);
-        Object.keys(cityGroups[city]).sort().forEach(suburb => {
-          const items = cityGroups[city][suburb];
-          const suburbDetails = document.createElement('details');
-          suburbDetails.className = 'idea-group';
-          suburbDetails.open = false;
-          const suburbSummary = document.createElement('summary');
-          const label = suburb || 'Various areas';
-          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} cafes</span>`;
-          suburbDetails.appendChild(suburbSummary);
-          items.forEach(item => {
-            const card = document.createElement('article');
-            card.className = 'idea-card';
-            card.id = `animalcafe-${item.id}`;
-            card.dataset.search = [item.name, item.city, item.suburb, item.category, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
-            card.dataset.category = (item.category || '').toLowerCase();
-            card.innerHTML = `
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-                <div>
-                  <h3>${item.name}</h3>
-                  <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.suburb}</span><span>${item.approx_cost || ''}</span></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
-                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
-                </div>
+
+        cityGroups[city].forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'idea-card';
+          card.id = `animalcafe-${item.id}`;
+          card.dataset.search = [item.name, item.city, item.category, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
+          card.dataset.category = (item.category || '').toLowerCase();
+          card.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div>
+                <h3>${item.name}</h3>
+                <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.approx_cost || ''}</span></div>
               </div>
-              <p class="restaurant-desc">${item.description || item.detail || ''}</p>
-              <div class="restaurant-fields">
-                <div class="restaurant-field">Animals: ${(item.animals || []).join(', ')}</div>
-                <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
+              <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
               </div>
-              <div class="idea-actions"><button type="button" onclick="focusOnAnimalCafe('${item.id}')">See on Map</button></div>
-            `;
-            suburbDetails.appendChild(card);
-          });
-          cityDetails.appendChild(suburbDetails);
+            </div>
+            <p class="restaurant-desc">${item.description || item.detail || ''}</p>
+            <div class="restaurant-fields">
+              <div class="restaurant-field">Animals: ${(item.animals || []).join(', ')}</div>
+              <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
+            </div>
+            <div class="idea-actions"><button type="button" onclick="focusOnAnimalCafe('${item.id}')">See on Map</button></div>
+          `;
+          cityDetails.appendChild(card);
         });
+
         animalCafeList.appendChild(cityDetails);
       });
     }
@@ -1510,14 +1483,28 @@
       const filteredItems = fullData
         .filter(item => (selectedFullDataCategory === 'All' || (item.category || item.type) === selectedFullDataCategory) &&
                         (selectedFullDataCity === 'All' || item.city === selectedFullDataCity));
+
+      // Map types to standardized groups
+      const mapToGroup = (type) => {
+        if (type === 'Accommodation' || type === 'Event') return 'Accommodation';
+        if (type === 'Restaurant') return 'Restaurants';
+        if (type === 'Instagram Idea' || type === 'Attraction') return 'Ideas & Attractions';
+        if (type === 'Animal Cafe') return 'Animal Cafes';
+        return 'Other';
+      };
+
       const cityGroups = {};
       filteredItems.forEach(item => {
         const city = item.city || 'Unknown';
-        const category = item.category || item.type || 'Other';
+        const group = mapToGroup(item.type);
         cityGroups[city] = cityGroups[city] || {};
-        cityGroups[city][category] = cityGroups[city][category] || [];
-        cityGroups[city][category].push(item);
+        cityGroups[city][group] = cityGroups[city][group] || [];
+        cityGroups[city][group].push(item);
       });
+
+      // Define the desired group order
+      const groupOrder = ['Accommodation', 'Restaurants', 'Ideas & Attractions', 'Animal Cafes'];
+
       Object.keys(cityGroups).sort().forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
@@ -1526,23 +1513,29 @@
         const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
         citySummary.innerHTML = `<span>${city}</span><span>${cityCount} items</span>`;
         cityDetails.appendChild(citySummary);
-        Object.keys(cityGroups[city]).sort().forEach(category => {
+
+        // Iterate in defined order
+        groupOrder.forEach(group => {
+          if (!cityGroups[city][group]) return;
           const categoryDetails = document.createElement('details');
           categoryDetails.className = 'idea-group';
           categoryDetails.open = false;
           const categorySummary = document.createElement('summary');
-          categorySummary.innerHTML = `<span>${category}</span><span>${cityGroups[city][category].length}</span>`;
+          categorySummary.innerHTML = `<span>${group}</span><span>${cityGroups[city][group].length}</span>`;
           categoryDetails.appendChild(categorySummary);
-          cityGroups[city][category].forEach(item => {
+
+          cityGroups[city][group].forEach(item => {
             const card = document.createElement('article');
             card.className = 'idea-card';
             card.id = `full-${item.type.toLowerCase().replace(/\s+/g, '-')}-${item.id}`;
-            card.dataset.search = [item.title, item.city, item.suburb, item.category, item.type, item.detail, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
+            card.dataset.search = [item.title, item.city, item.category, item.type, item.detail, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
             card.dataset.category = (item.category || item.type || '').toLowerCase();
+
             const extraFields = [];
             if (item.type === 'Restaurant') {
-              const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '';
+              const wait = item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait || '';
               extraFields.push(`<div class="restaurant-field">Approx wait: ${wait}</div>`);
+              extraFields.push(`<div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>`);
               extraFields.push(`<div class="restaurant-field">Cost: ${item.cost_approx || item.cost || ''}</div>`);
             }
             if (item.type === 'Attraction') {
@@ -1559,14 +1552,28 @@
             if (item.type === 'Accommodation' || item.type === 'Event') {
               extraFields.push(`<div class="restaurant-field">Dates: ${item.dates || ''}</div>`);
             }
+
+            // Build links section with both Google Maps and other link if available
+            const linksHtml = [];
+            const gmapLink = item.google_maps_link || item.google_map_link;
+            const otherLink = item.website || item.tabelog_link || item.link;
+
+            if (gmapLink) {
+              linksHtml.push(`<a href="${gmapLink}" target="_blank" rel="noreferrer">Google Maps</a>`);
+            }
+            if (otherLink && otherLink !== gmapLink) {
+              const linkLabel = item.tabelog_link ? 'Tabelog' : (item.website ? 'Website' : 'Link');
+              linksHtml.push(`<a href="${otherLink}" target="_blank" rel="noreferrer">${linkLabel}</a>`);
+            }
+
             card.innerHTML = `
               <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
                 <div>
                   <h3>${item.title}</h3>
-                  <div class="idea-meta"><span>${item.type}</span><span>${item.category || ''}</span><span>${item.city}</span><span>${item.suburb || ''}</span></div>
+                  <div class="idea-meta"><span>${item.type}</span><span>${item.category || ''}</span><span>${item.city}</span></div>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
-                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Details</a>
+                  ${linksHtml.join('')}
                 </div>
               </div>
               <p class="restaurant-desc">${item.detail || item.description || ''}</p>
@@ -1649,13 +1656,6 @@
         selectedLeg = button.dataset.leg;
         renderIdeas();
         updateSearchAndFilter();
-        // Update train route styling to highlight selected leg
-        trainRoutes.forEach(r => {
-          if (!r._line) return;
-          const isMatch = (selectedLeg === 'All' || r.leg === selectedLeg);
-          r._line.setStyle({ opacity: isMatch ? 0.95 : 0.15, weight: isMatch ? 7 : 4 });
-          if (isMatch) r._line.bringToFront();
-        });
       });
     });
 

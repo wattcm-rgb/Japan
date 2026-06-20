@@ -8,9 +8,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Gyoza / Chinese-Japanese",
         "description": "Spacious seating options compared to most tiny Shibuya shops. Great casual atmosphere for groups sharing giant plates of gyoza.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13149405/",
         "google_maps_link": "https://maps.app.goo.gl/qX8sY7rW8P1m3K9z5",
-        "table_for_9_likelihood": "High (If booking an early dinner slots)",
+        "table_for_9_likelihood": "High (If booking an early dinner slot)",
+        "approx_wait_time_walkin": "15-30 mins (Highly recommended to book ahead for 9)",
         "coordinates": {"lat": 35.6617, "lng": 139.6975}
       },
       {
@@ -20,9 +20,9 @@
         "cost_approx": "¥1,200 - ¥2,500",
         "cuisine_type": "Vegan Teishoku (Set Meals)",
         "description": "An enduring Shibuya staple serving incredible, hearty vegan set meals. Cozy, so advance communication for a group of 9 is necessary.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13043232/",
         "google_maps_link": "https://maps.app.goo.gl/tM7bN2vR5P1m9K4z8",
         "table_for_9_likelihood": "Medium (Requires booking the main back-table space)",
+        "approx_wait_time_walkin": "30-45 mins (Walk-in for 9 is very tough without booking)",
         "coordinates": {"lat": 35.6552, "lng": 139.7011}
       },
       {
@@ -32,9 +32,9 @@
         "cost_approx": "¥4,000 - ¥6,000",
         "cuisine_type": "Hakata-style Yakitori / Kushiyaki",
         "description": "Incredibly lively Izakaya specializing in skewered meats and vegetables. High energy and perfect for a group celebrating.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13046039/",
         "google_maps_link": "https://maps.app.goo.gl/wP4bK2vR5M1m8K7z6",
         "table_for_9_likelihood": "Medium (They have larger sunken kotatsu tables; must book weeks out)",
+        "approx_wait_time_walkin": "45-60+ mins (Rarely accommodates a walk-in of 9 in prime hours)",
         "coordinates": {"lat": 35.6598, "lng": 139.6954}
       },
       {
@@ -44,9 +44,9 @@
         "cost_approx": "¥20,000 - ¥35,000",
         "cuisine_type": "Sushi Omakase",
         "description": "An exquisite, high-end Edomae sushi experience. Elegant, quiet, and handles premium seasonal fish with mastery.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13019310/",
         "google_maps_link": "https://maps.app.goo.gl/xY3bK2vR5M1m8K9z7",
         "table_for_9_likelihood": "Low (Counter focus; group of 9 requires a private room buyout or whole-counter booking)",
+        "approx_wait_time_walkin": "Reservation Only (Book 1-2 months in advance)",
         "coordinates": {"lat": 35.6534, "lng": 139.7121}
       },
       {
@@ -56,9 +56,9 @@
         "cost_approx": "¥1,000 - ¥1,800",
         "cuisine_type": "Tonkotsu Ramen",
         "description": "The quintessential solo-booth tonkotsu ramen experience. Fast, iconic, and reliably customizable via ticket machines.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13014163/",
         "google_maps_link": "https://maps.app.goo.gl/yZ4bK2vR5M1m8K0z1",
         "table_for_9_likelihood": "High (But you will be split up across individual solo booths)",
+        "approx_wait_time_walkin": "30-60 mins (Queue moves quickly, but getting 9 continuous booths takes extra time)",
         "coordinates": {"lat": 35.6619, "lng": 139.7003}
       },
       {
@@ -68,9 +68,9 @@
         "cost_approx": "¥3,000 - ¥5,000",
         "cuisine_type": "Japanese-Style Bistro / Sake Bar",
         "description": "Tucked away from the main scramble, this low-key bistro serves masterful small plates paired beautifully with local sake.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1303/A130301/13243110/",
         "google_maps_link": "https://maps.app.goo.gl/zZ5bK2vR5M1m8K2z3",
         "table_for_9_likelihood": "Medium (Small interior, booking the back group section is required)",
+        "approx_wait_time_walkin": "20-40 mins (If table space allows; booking highly advised)",
         "coordinates": {"lat": 35.6568, "lng": 139.6942}
       }
     ],
@@ -82,9 +82,9 @@
         "cost_approx": "¥3,000 - ¥6,000",
         "cuisine_type": "Tempura",
         "description": "Operating since 1924, this multi-floor historic restaurant makes serving incredible, light tempura to large families look easy.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1304/A130401/13000921/",
         "google_maps_link": "https://maps.app.goo.gl/aM2bK3vR5M1m8K4z9",
         "table_for_9_likelihood": "High (Multi-floor layout accommodates large groups well with reservations)",
+        "approx_wait_time_walkin": "30-45 mins during peak hours if unreserved",
         "coordinates": {"lat": 35.6908, "lng": 139.7042}
       },
       {
@@ -94,9 +94,9 @@
         "cost_approx": "¥2,000 - ¥4,000",
         "cuisine_type": "100% Vegan Fusion & Desserts",
         "description": "Famous for their heavenly vegan matcha pancakes and rich multi-course plant-based lunch sets. Very foreigner-friendly.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1304/A130401/13134117/",
         "google_maps_link": "https://maps.app.goo.gl/bN3bK4vR5M1m8K5z0",
         "table_for_9_likelihood": "Medium (Spanning several intimate floors; booking ahead is mandatory)",
+        "approx_wait_time_walkin": "20-40 mins (Highly chaotic walk-in for big numbers; reserve online)",
         "coordinates": {"lat": 35.6912, "lng": 139.7076}
       },
       {
@@ -106,9 +106,9 @@
         "cost_approx": "¥10,000 - ¥18,000",
         "cuisine_type": "Sukiyaki / Shabu-Shabu",
         "description": "Meltingly tender A5 Wagyu beef cooked tableside in a rich, sweet soy broth. A masterclass in traditional Tokyo beef cuisine.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1316/A131602/13132715/",
         "google_maps_link": "https://maps.app.goo.gl/cN4bK5vR5M1m8K6z1",
         "table_for_9_likelihood": "Medium (They have exquisite private rooms that perfectly fit 8-10 people)",
+        "approx_wait_time_walkin": "Reservation Only (Must book private rooms 3-4 weeks out)",
         "coordinates": {"lat": 35.6472, "lng": 139.7324}
       },
       {
@@ -118,9 +118,9 @@
         "cost_approx": "¥15,000 - ¥30,000",
         "cuisine_type": "Premium Steaks & Western Fine Dining",
         "description": "Perched on the 52nd floor with breathtaking floor-to-ceiling city views. World-class wine list and exceptional service.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1304/A130401/13004310/",
         "google_maps_link": "https://maps.app.goo.gl/dN5bK6vR5M1m8K7z2",
         "table_for_9_likelihood": "High (Spacious grand dining room, easily handles large tables via early booking)",
+        "approx_wait_time_walkin": "Reservation Strongly Advised (Bar area walk-ins have 30-60 min waits; no large group tables guaranteed)",
         "coordinates": {"lat": 35.6856, "lng": 139.6908}
       },
       {
@@ -130,9 +130,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Motsuyaki / Yakitori",
         "description": "A throwback to Showa-era Tokyo along Memory Lane. Grilling savory skewers over charcoal in a legendary narrow alley.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1304/A130401/13006711/",
         "google_maps_link": "https://maps.app.goo.gl/eN6bK7vR5M1m8K8z3",
         "table_for_9_likelihood": "Low (Alley stalls are tiny; you will likely need to split into 3 groups of 3)",
+        "approx_wait_time_walkin": "15-45 mins (Constant line rotation, expect immediate group splitting)",
         "coordinates": {"lat": 35.6931, "lng": 139.6996}
       },
       {
@@ -142,9 +142,9 @@
         "cost_approx": "¥4,000 - ¥7,000",
         "cuisine_type": "Sake Tasting & Small Plates",
         "description": "An incredible curation of rare, unpasteurized, and aged sakes poured by an incredibly knowledgeable expert host.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1304/A130401/13192311/",
         "google_maps_link": "https://maps.app.goo.gl/fN7bK8vR5M1m8K9z4",
         "table_for_9_likelihood": "Low (Very intimate setting; require a private group reservation layout upfront)",
+        "approx_wait_time_walkin": "Reservation Only (Tiny footprint can't support sudden large walk-ins)",
         "coordinates": {"lat": 35.6891, "lng": 139.7012}
       }
     ],
@@ -156,9 +156,9 @@
         "cost_approx": "¥6,000 - ¥12,000",
         "cuisine_type": "Sukiyaki / Shabu-Shabu",
         "description": "Founded in 1895. Incredible tatami rooms where kimono-clad staff prepare legendary sukiyaki right before your eyes.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13003649/",
         "google_maps_link": "https://maps.app.goo.gl/gN8bK9vR5M1m8K0z5",
         "table_for_9_likelihood": "High (Large historic building with ample private dining rooms available)",
+        "approx_wait_time_walkin": "30-60 mins at lunch if unbooked; dinner requires reservations for large rooms",
         "coordinates": {"lat": 35.7124, "lng": 139.7915}
       },
       {
@@ -168,9 +168,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Plant-Based Traditional Ramen & Noodles",
         "description": "Delightful plant-based takes on classic comforting noodle dishes right near the temple grounds.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13251214/",
         "google_maps_link": "https://maps.app.goo.gl/hN9bK0vR5M1m8K1z6",
         "table_for_9_likelihood": "Medium (Cozy interior; try to visit outside peak lunch windows)",
+        "approx_wait_time_walkin": "15-30 mins during peak weekend daytime traffic",
         "coordinates": {"lat": 35.7145, "lng": 139.7962}
       },
       {
@@ -180,9 +180,9 @@
         "cost_approx": "¥2,000 - ¥4,000",
         "cuisine_type": "Monjayaki (Tokyo-style savory pancake)",
         "description": "The true downtown Tokyo comfort food experience. A runny, savory, intensely flavorful pancake grilled directly on a tabletop iron plate.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13161245/",
         "google_maps_link": "https://maps.app.goo.gl/iO1bK1vR5M1m8K2z7",
         "table_for_9_likelihood": "High (They can cluster tables together, but everyone cooks in sub-groups of 3-4 per grill)",
+        "approx_wait_time_walkin": "20-40 mins in evening blocks; easy rotation if arriving early (before 6 PM)",
         "coordinates": {"lat": 35.7118, "lng": 139.7931}
       },
       {
@@ -192,9 +192,9 @@
         "cost_approx": "¥18,000 - ¥30,000",
         "cuisine_type": "French-Japanese Modern Fusion",
         "description": "Two Michelin stars. Exceptional French culinary techniques utilizing highly local, seasonal Japanese ingredients.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13038468/",
         "google_maps_link": "https://maps.app.goo.gl/jO2bK2vR5M1m8K3z8",
         "table_for_9_likelihood": "Low (Highly exclusive dining room; requires months of planning)",
+        "approx_wait_time_walkin": "Reservation Only (No walk-in capacity available)",
         "coordinates": {"lat": 35.7189, "lng": 139.7958}
       },
       {
@@ -204,9 +204,9 @@
         "cost_approx": "¥300 - ¥600",
         "cuisine_type": "Minced Beef Cutlets (Street Food)",
         "description": "Incredibly juicy, crispy, deep-fried panko-crusted beef cutlets. Ideal for a quick mid-walk street food treat.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13116345/",
         "google_maps_link": "https://maps.app.goo.gl/kO3bK3vR5M1m8K4z9",
         "table_for_9_likelihood": "High (Counter service window; buy and enjoy in the adjacent designated eating space)",
+        "approx_wait_time_walkin": "5-15 mins in line (Fast window service, no seated table delays)",
         "coordinates": {"lat": 35.7114, "lng": 139.7952}
       },
       {
@@ -216,9 +216,9 @@
         "cost_approx": "¥3,000 - ¥6,000",
         "cuisine_type": "Tororo (Grated Yam) Traditional Cuisine",
         "description": "Overlooking the Sumida River, this historic spot specializes in comforting tororo poured over barley rice.",
-        "tabelog_link": "https://tabelog.com/en/tokyo/A1311/A131102/13003657/",
         "google_maps_link": "https://maps.app.goo.gl/lO4bK4vR5M1m8K5z0",
         "table_for_9_likelihood": "High (Spacious multi-story layout with beautiful views)",
+        "approx_wait_time_walkin": "15-30 mins for the buffet floor; easier access on weekday lunch slots",
         "coordinates": {"lat": 35.7089, "lng": 139.7971}
       }
     ],
@@ -230,9 +230,9 @@
         "cost_approx": "¥3,500 - ¥6,000",
         "cuisine_type": "Craft Beer & Western Izakaya",
         "description": "Spacious modern layout inside the grand Umeda commercial sectors, providing easy open seating configurations for big parties.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270101/27111243/",
         "google_maps_link": "https://maps.app.goo.gl/mO5bK5vR5M1m8K6z1",
         "table_for_9_likelihood": "High (Modern open floor-plan makes grouping easy)",
+        "approx_wait_time_walkin": "10-25 mins (Spacious building cushions peak lunch wait timelines)",
         "coordinates": {"lat": 34.7042, "lng": 135.4975}
       },
       {
@@ -242,9 +242,9 @@
         "cost_approx": "¥1,200 - ¥2,500",
         "cuisine_type": "100% Vegan Western-Japanese Cafe",
         "description": "One of Osaka's oldest dedicated vegetarian establishments. Serves stellar plant-based burgers, wraps, and daily curry sets.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270106/27056455/",
         "google_maps_link": "https://maps.app.goo.gl/nO6bK6vR5M1m8K7z2",
         "table_for_9_likelihood": "Medium (Call ahead so they can join their central modular tables together)",
+        "approx_wait_time_walkin": "15-30 mins; highly recommended to drop a notice call 1 hour before arrival",
         "coordinates": {"lat": 34.6817, "lng": 135.5002}
       },
       {
@@ -253,10 +253,10 @@
         "tabelog_rating": "3.38",
         "cost_approx": "¥2,000 - ¥4,000",
         "cuisine_type": "Kushikatsu (Deep-fried skewers)",
-        "description": "The quintessential Osaka street-food experience clean, crisp skewered meats and vegetables dipped in rich savory sauce.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270101/27045124/",
+        "description": "The quintessential Osaka street-food experience—clean, crisp skewered meats and vegetables dipped in rich savory sauce.",
         "google_maps_link": "https://maps.app.goo.gl/oO7bK7vR5M1m8K8z3",
         "table_for_9_likelihood": "High (The Umeda branch relies heavily on booth tables which comfortably seat larger family groups)",
+        "approx_wait_time_walkin": "20-40 mins (Line cycles fast; booths fit large groups well)",
         "coordinates": {"lat": 34.7064, "lng": 135.4991}
       },
       {
@@ -266,9 +266,9 @@
         "cost_approx": "¥25,000 - ¥45,000",
         "cuisine_type": "Traditional Kaiseki",
         "description": "Three Michelin stars. Breathtakingly quiet and beautiful traditional sukiya-style house setting serving spectacular masterwork courses.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2706/A270602/27006876/",
         "google_maps_link": "https://maps.app.goo.gl/pO8bK8vR5M1m8K9z4",
         "table_for_9_likelihood": "Low (Requires extensive outreach to secure their signature large private group tatami halls)",
+        "approx_wait_time_walkin": "Reservation Only (Typically books 4-8 weeks out)",
         "coordinates": {"lat": 34.7731, "lng": 135.5312}
       },
       {
@@ -278,9 +278,9 @@
         "cost_approx": "¥1,000 - ¥1,800",
         "cuisine_type": "Rich Chicken Ramen (Halal/Vegan options)",
         "description": "Incredibly rich, comforting chicken paitan broth ramen that is highly accessible and deeply flavorful.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270101/27097412/",
         "google_maps_link": "https://maps.app.goo.gl/qO9bK9vR5M1m8K0z5",
         "table_for_9_likelihood": "Medium (Fast-moving casual environment)",
+        "approx_wait_time_walkin": "15-35 mins (High rotation turnover speed helps keep queues low)",
         "coordinates": {"lat": 34.7011, "lng": 135.4952}
       },
       {
@@ -290,9 +290,9 @@
         "cost_approx": "¥8,000 - ¥15,000",
         "cuisine_type": "Teppanyaki Premium Steaks & Seafood",
         "description": "Tucked cleanly away inside the InterContinental, this refined teppan counter offers an intimate look at premium sizzled meats.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270101/27073215/",
         "google_maps_link": "https://maps.app.goo.gl/rP0bK0vR5M1m8K1z6",
         "table_for_9_likelihood": "Medium (They can coordinate private side-by-side grill counters if booked in advance)",
+        "approx_wait_time_walkin": "Reservation Strongly Recommended (Walk-in seating capacity for 9 is very rare)",
         "coordinates": {"lat": 34.7048, "lng": 135.4941}
       }
     ],
@@ -304,9 +304,9 @@
         "cost_approx": "¥2,000 - ¥4,000",
         "cuisine_type": "Okonomiyaki (Savory Cabbage Pancake) / Teppanyaki",
         "description": "A massive, multi-floor landmark flagship location. The theater of having your okonomiyaki flipped on the table grills is universally loved.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270202/27001428/",
         "google_maps_link": "https://maps.app.goo.gl/sP1bK1vR5M1m8K2z7",
         "table_for_9_likelihood": "High (Multi-level seating allows groups to easily sit together at adjacent table grills)",
+        "approx_wait_time_walkin": "20-45 mins (Large size manages crowd lines efficiently)",
         "coordinates": {"lat": 34.6672, "lng": 135.5034}
       },
       {
@@ -316,9 +316,9 @@
         "cost_approx": "¥3,000 - ¥5,000",
         "cuisine_type": "Vegan & Gluten-Free Okonomiyaki",
         "description": "A modern revelation in Namba. Recreates the classic, fluffy texture of Osaka savory street food completely plant-based.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270202/27131214/",
         "google_maps_link": "https://maps.app.goo.gl/tP2bK2vR5M1m8K3z8",
         "table_for_9_likelihood": "Medium (Advance reservations are necessary due to its unique, highly sought-after menu)",
+        "approx_wait_time_walkin": "30-50 mins if walking in during peak evening dinner shifts",
         "coordinates": {"lat": 34.6691, "lng": 135.5015}
       },
       {
@@ -328,9 +328,9 @@
         "cost_approx": "¥2,000 - ¥3,500",
         "cuisine_type": "Historic Okonomiyaki / Yam-pancake",
         "description": "Operating since 1945 along the glowing canal paths. Legendary for its 'Yamaimo-yaki' using 100% grated mountain yam dough instead of flour.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270202/27001278/",
         "google_maps_link": "https://maps.app.goo.gl/uP3bK3vR5M1m8K4z9",
         "table_for_9_likelihood": "Low (Massive queues outside; walk-ins for 9 are incredibly tough unless arriving at 10:45 AM)",
+        "approx_wait_time_walkin": "45-90 mins (Intense Dotonbori foot traffic makes lines slow for large groups)",
         "coordinates": {"lat": 34.6687, "lng": 135.5021}
       },
       {
@@ -340,9 +340,9 @@
         "cost_approx": "¥8,000 - ¥15,000",
         "cuisine_type": "Premium Matsusaka Wagyu Yakiniku (BBQ)",
         "description": "Specializes in whole-cow purchasing of legendary Matsusaka beef. You grill assorted premium cuts to perfection over smoky tabletop grills.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270202/27044431/",
         "google_maps_link": "https://maps.app.goo.gl/vP4bK4vR5M1m8K5z0",
         "table_for_9_likelihood": "High (They feature lovely wood-paneled private rooms that fit large parties beautifully)",
+        "approx_wait_time_walkin": "30-60 mins for walk-ins; reserve online weeks early to lock down a large private booth room",
         "coordinates": {"lat": 34.6681, "lng": 135.5011}
       },
       {
@@ -352,9 +352,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Kushikatsu (Deep-fried skewers)",
         "description": "The absolute birthplace of Kushikatsu under the shadow of Tsutenkaku Tower. Crispy skewers dipped in their famous single-dip secret sauce.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270206/27004260/",
         "google_maps_link": "https://maps.app.goo.gl/wP5bK5vR5M1m8K6z1",
         "table_for_9_likelihood": "Low (The historic original branch features only 12 counter seats. Better to aim for their massive nearby 'Janjan' or 'Dotombori' branches)",
+        "approx_wait_time_walkin": "40-75 mins at original counter; larger branches nearby process lines in 20-30 mins",
         "coordinates": {"lat": 34.6506, "lng": 135.5057}
       },
       {
@@ -364,9 +364,9 @@
         "cost_approx": "¥900 - ¥1,500",
         "cuisine_type": "Nappa Cabbage Clear-Broth Ramen",
         "description": "Features a uniquely sweet, savory clear soup loaded with crunchy napa cabbage and tender pork slices. A distinct local favorite.",
-        "tabelog_link": "https://tabelog.com/en/osaka/A2701/A270202/27001551/",
         "google_maps_link": "https://maps.app.goo.gl/xP6bK6vR5M1m8K7z2",
         "table_for_9_likelihood": "High (Large, long continuous counter arrays that handle high-volume turnover quickly)",
+        "approx_wait_time_walkin": "15-30 mins (Fast queue clearing speed keeps things moving smoothly)",
         "coordinates": {"lat": 34.6684, "lng": 135.5029}
       }
     ],
@@ -378,9 +378,9 @@
         "cost_approx": "¥3,500 - ¥7,000",
         "cuisine_type": "Sushi / Kaiseki / Shabu-Shabu",
         "description": "Housed inside a stunning 400-year-old historic mansion overlooking a traditional stroll garden and private stream. Exceptional value and perfect for families.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260202/26000843/",
         "google_maps_link": "https://maps.app.goo.gl/yP7bK7vR5M1m8K8z3",
         "table_for_9_likelihood": "High (Huge historic layout containing numerous spacious private group dining rooms)",
+        "approx_wait_time_walkin": "20-40 mins if unbooked, but reservation slots open months early online",
         "coordinates": {"lat": 35.0121, "lng": 135.7704}
       },
       {
@@ -390,9 +390,9 @@
         "cost_approx": "¥4,000 - ¥8,000",
         "cuisine_type": "Shojin Ryori (Buddhist Vegetarian)",
         "description": "Located deep within the beautiful grounds of Arashiyama's Tenryu-ji Temple. Pure zen-like atmosphere serving entirely plant-based seasonal dishes.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260403/26001831/",
         "google_maps_link": "https://maps.app.goo.gl/zP8bK8vR5M1m8K9z4",
         "table_for_9_likelihood": "High (Large, expansive tatami temple halls designed for big visiting groups; reservation mandatory)",
+        "approx_wait_time_walkin": "Reservation Only (Must be booked via temple portal in advance)",
         "coordinates": {"lat": 35.0158, "lng": 135.6776}
       },
       {
@@ -402,9 +402,9 @@
         "cost_approx": "¥20,000 - ¥35,000",
         "cuisine_type": "Traditional Kyo-ryori / Kaiseki",
         "description": "A breathtaking showcase of Kyoto's subtle, vegetable-and-dashi focused high culinary arts, capturing seasonal change beautifully.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260501/26031214/",
         "google_maps_link": "https://maps.app.goo.gl/aQ9bK9vR5M1m8K0z5",
         "table_for_9_likelihood": "Low (Highly exclusive; reservation tracking via concierge services is essential)",
+        "approx_wait_time_walkin": "Reservation Only (No walk-in seats map onto large parties)",
         "coordinates": {"lat": 35.0041, "lng": 135.7773}
       },
       {
@@ -414,9 +414,9 @@
         "cost_approx": "¥30,000 - ¥50,000",
         "cuisine_type": "Elite Kaiseki",
         "description": "World-famous 3 Michelin-starred landmark culinary estate tucked alongside the quiet green Higashiyama hills.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260301/26002360/",
         "google_maps_link": "https://maps.app.goo.gl/bQ0bK0vR5M1m8K1z6",
         "table_for_9_likelihood": "Low (Requires months of direct notice and custom allocation confirmation for group spaces)",
+        "approx_wait_time_walkin": "Reservation Only (Requires matching concierge booking protocols)",
         "coordinates": {"lat": 34.9985, "lng": 135.7831}
       },
       {
@@ -426,9 +426,9 @@
         "cost_approx": "¥1,200 - ¥2,500",
         "cuisine_type": "Bite-Sized Gyoza / Izakaya Pub",
         "description": "Famous for their incredibly crispy, tiny 'winged' gyoza served on hot iron pans. Fun, frantic, and incredibly cheap.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260202/26004812/",
         "google_maps_link": "https://maps.app.goo.gl/cQ1bK1vR5M1m8K2z7",
         "table_for_9_likelihood": "Medium (They have a back table tier, but expect a lively wait together outside during peak dinner times)",
+        "approx_wait_time_walkin": "30-60 mins (One of the most packed tourist casual queues in downtown Kyoto)",
         "coordinates": {"lat": 35.0092, "lng": 135.7694}
       },
       {
@@ -438,9 +438,10 @@
         "cost_approx": "¥15,000 - ¥22,000",
         "cuisine_type": "Wood-Fired Farm-to-Table Omisoka",
         "description": "Set beautifully near the Philosopher’s Path, featuring a brilliant wood-fired multi-course menu utilizing fresh hyper-local farm vegetables.",
-        "tabelog_link": "https://tabelog.com/en/kyoto/A2601/A260302/26026521/",
+
         "google_maps_link": "https://maps.app.goo.gl/dQ2bK2vR5M1m8K3z8",
         "table_for_9_likelihood": "Low (Extremely limited total table counts; requires checking their web booking engine right as slots open)",
+        "approx_wait_time_walkin": "Reservation Only (Intimate single seating format)",
         "coordinates": {"lat": 35.0234, "lng": 135.7952}
       }
     ],
@@ -452,9 +453,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Hiroshima-style Okonomiyaki",
         "description": "A legendary 3-story theme building housing over 20 independent okonomiyaki stalls. Incredible sensory overload that kids love.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3401/A340101/34001552/",
         "google_maps_link": "https://maps.app.goo.gl/eQ3bK3vR5M1m8K4z9",
         "table_for_9_likelihood": "High (If individual counters are full, you can easily split 5 and 4 across adjacent vendors)",
+        "approx_wait_time_walkin": "15-30 mins (You can drift across floors to find stall openings for your sub-groups)",
         "coordinates": {"lat": 34.3918, "lng": 132.4612}
       },
       {
@@ -464,9 +465,9 @@
         "cost_approx": "¥1,500 - ¥2,800",
         "cuisine_type": "Hiroshima Okonomiyaki (Vegan Menu)",
         "description": "Right by the Peace Park, offering an exceptional, dedicated plant-based menu using custom vegan savory sauce and soy meat alternatives.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3401/A340101/34002115/",
         "google_maps_link": "https://maps.app.goo.gl/fQ4bK4vR5M1m8K5z0",
         "table_for_9_likelihood": "Medium (Incredibly popular tourist spot; lines move quickly but large groups face wait splits)",
+        "approx_wait_time_walkin": "30-55 mins during standard evening lines; queue forms early down the street corner",
         "coordinates": {"lat": 34.3926, "lng": 132.4539}
       },
       {
@@ -476,9 +477,9 @@
         "cost_approx": "¥2,500 - ¥4,500",
         "cuisine_type": "Grilled Hiroshima Oysters",
         "description": "A casual, open-air coastal warehouse setup where you grab baskets of giant, plump local oysters and roast them yourself over tabletop pits.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3401/A340102/34015112/",
         "google_maps_link": "https://maps.app.goo.gl/gQ5bK5vR5M1m8K6z1",
         "table_for_9_likelihood": "High (Huge, open warehouse picnic table setting that handles big groups effortlessly)",
+        "approx_wait_time_walkin": "10-25 mins (Spacious building footprint absorbs crowds well on weekends)",
         "coordinates": {"lat": 34.3512, "lng": 132.4654}
       },
       {
@@ -488,9 +489,9 @@
         "cost_approx": "¥12,000 - ¥22,000",
         "cuisine_type": "Premium Setouchi Seafood Kaiseki",
         "description": "Refined private rooms showcasing spectacular local seafood caught fresh from the Seto Inland Sea.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3401/A340101/34003214/",
         "google_maps_link": "https://maps.app.goo.gl/hQ6bK6vR5M1m8K7z2",
         "table_for_9_likelihood": "High (They specialize in private multi-course banquets for travelling family groups)",
+        "approx_wait_time_walkin": "Reservation Advised (Schedules private dining layouts 2-3 weeks out)",
         "coordinates": {"lat": 34.3956, "lng": 132.4712}
       },
       {
@@ -500,9 +501,9 @@
         "cost_approx": "¥1,000 - ¥1,800",
         "cuisine_type": "Hiroshima Tsukemen (Spicy Cold Dipping Noodles)",
         "description": "Famous local style cold noodles served with piles of fresh cabbage and scallions, dipped in a customizable fiery chili-sesame broth.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3401/A340101/34000155/",
         "google_maps_link": "https://maps.app.goo.gl/iR7bK7vR5M1m8K8z3",
         "table_for_9_likelihood": "Medium (Casual pub atmosphere)",
+        "approx_wait_time_walkin": "15-30 mins; table shifts are relatively fast",
         "coordinates": {"lat": 34.3904, "lng": 132.4628}
       },
       {
@@ -512,9 +513,9 @@
         "cost_approx": "¥2,500 - ¥4,500",
         "cuisine_type": "Anagomeshi (Grilled Conger Eel over Rice)",
         "description": "Operating since 1901 right near the Miyajima ferry landing. Masterfully grilled wild conger eel brushed with a deeply savory century-old tare sauce.",
-        "tabelog_link": "https://tabelog.com/en/hiroshima/A3402/A340201/34000065/",
         "google_maps_link": "https://maps.app.goo.gl/jR8bK8vR5M1m8K9z4",
         "table_for_9_likelihood": "Low (Massive historic cult following; expect major queues unless you grab their exceptional take-out bento boxes)",
+        "approx_wait_time_walkin": "45-90+ mins (Extremely dense queue footprint; buying their hot bento boxes to eat on the coast takes 5 mins)",
         "coordinates": {"lat": 34.3114, "lng": 132.3042}
       }
     ],
@@ -526,9 +527,9 @@
         "cost_approx": "¥2,000 - ¥4,000",
         "cuisine_type": "Hand-made Soba Noodles",
         "description": "Beautiful traditional mountain-style lodge house famous for pristine buckwheat noodles ground using pure Hakone mineral spring water.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14000185/",
         "google_maps_link": "https://maps.app.goo.gl/kR9bK9vR5M1m8K0z5",
         "table_for_9_likelihood": "Medium (Spacious rustic interior, but lunch hours get incredibly busy with tour traffic)",
+        "approx_wait_time_walkin": "30-50 mins at peak lunch windows; arriving by 11:15 AM cuts wait lines significantly",
         "coordinates": {"lat": 35.2312, "lng": 139.1021}
       },
       {
@@ -538,9 +539,9 @@
         "cost_approx": "¥1,800 - ¥3,500",
         "cuisine_type": "Organic Tofu & Local Mountain Vegetable Cuisine",
         "description": "Charming mountain stop highlighting gorgeous local tofu varieties alongside wild gathered seasonal highland vegetables.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14051214/",
         "google_maps_link": "https://maps.app.goo.gl/lS0bK0vR5M1m8K1z6",
         "table_for_9_likelihood": "Medium (Quaint layout, reach out early to secure group table bookings)",
+        "approx_wait_time_walkin": "20-40 mins if unreserved; phone checking ahead is highly recommended",
         "coordinates": {"lat": 35.2089, "lng": 139.0314}
       },
       {
@@ -550,9 +551,9 @@
         "cost_approx": "¥2,000 - ¥3,500",
         "cuisine_type": "Tofu Katsu Ni (Deep-fried tofu stuffed with minced pork)",
         "description": "Hakone's absolute signature dish. Fluffy local tofu stuffed with seasoned savory minced meat, deep-fried panko-style, then simmered in dashi and egg.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14000008/",
         "google_maps_link": "https://maps.app.goo.gl/mS1bK1vR5M1m8K2z7",
         "table_for_9_likelihood": "Low (Legendary queues; group walk-ins during lunch are brutal without using their ticket wait system early)",
+        "approx_wait_time_walkin": "45-90 mins (Uses a digital ticketing machine system at the entrance porch layout)",
         "coordinates": {"lat": 35.2486, "lng": 139.0465}
       },
       {
@@ -562,9 +563,9 @@
         "cost_approx": "¥10,000 - ¥20,000",
         "cuisine_type": "Premium Teppanyaki Wagyu Fusion",
         "description": "A stunning architectural collaboration with Chef Nobu Matsuhisa, serving premium local cuts of grilled black Wagyu alongside mountain vistas.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14030612/",
-        "google_maps_link": "https://maps.app.goo.gl/nS2bK2vR5M1m8K3z8",
+        "google_maps_link": "https://maps.app.goo.gl/nS2bK3vR5M1m8K3z8",
         "table_for_9_likelihood": "Medium (They have gorgeous group seating blocks, but advance evening bookings are essential)",
+        "approx_wait_time_walkin": "Reservation Strongly Advised (Walk-ins rarely secure large dining blocks)",
         "coordinates": {"lat": 35.2461, "lng": 139.0492}
       },
       {
@@ -574,9 +575,9 @@
         "cost_approx": "¥1,000 - ¥2,000",
         "cuisine_type": "Artisanal Bakery & Bistro Cafe",
         "description": "Perched perfectly right along the shores of Lake Ashi. Grab incredible fresh curried bread buns and eat at their outdoor foot-bath terrace counter.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14051034/",
         "google_maps_link": "https://maps.app.goo.gl/oS3bK3vR5M1m8K4z9",
         "table_for_9_likelihood": "High (Large upstairs multi-tier cafe floors handle high volume gracefully)",
+        "approx_wait_time_walkin": "10-25 mins for bakery checkout lines; patio tables rotate frequently",
         "coordinates": {"lat": 35.2014, "lng": 139.0258}
       },
       {
@@ -586,9 +587,9 @@
         "cost_approx": "¥1,500 - ¥3,000",
         "cuisine_type": "Traditional Teishoku / Yam Tororo Rice",
         "description": "A quiet, wonderfully unassuming rest house oasis away from the heavy train crowds, serving comforting mountain sets.",
-        "tabelog_link": "https://tabelog.com/en/kanagawa/A1410/A141001/14041214/",
         "google_maps_link": "https://maps.app.goo.gl/pS4bK4vR5M1m8K5z0",
         "table_for_9_likelihood": "Medium (Relaxed countryside pacing)",
+        "approx_wait_time_walkin": "10-20 mins (Wonderfully calm compared to lakefront properties)",
         "coordinates": {"lat": 35.2217, "lng": 139.0984}
       }
     ]
