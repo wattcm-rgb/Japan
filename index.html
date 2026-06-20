@@ -25,7 +25,7 @@
     header { padding: 28px 22px 18px; background: #fff6f8; color: #7d2f57; }
     header h1 { margin: 0; font-size: 3rem; line-height: 1.05; letter-spacing: -.04em; font-weight: 800; color: #7d2f57; }
     .main { max-width: 1380px; margin: 0 auto; padding: 22px; }
-    .tabs { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
     .tab-button { border: 1px solid #f1d5e0; background: #fff6f8; color: #7d2f57; padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: all .2s ease; font-weight: 600; text-align: center; }
     .tab-button.active { background: #d880a2; color: #fff; border-color: #d880a2; }
     .panel { display: none; gap: 18px; }
@@ -59,6 +59,7 @@
     .hotel-marker { background: #d3598f; }
     .event-marker { background: #9f4f7b; }
     .idea-marker { background: #f0a7c8; }
+    .restaurant-marker { background: #f57da3; }
     .idea-group { border: 1px solid #f2d6e0; border-radius: 20px; padding: 12px 14px; background: #fff7fb; margin-bottom: 16px; box-shadow: 0 12px 34px rgba(158,83,110,.05); }
     .idea-group summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; font-weight: 700; padding: 10px 0; color: #7d2f57; }
     .idea-group summary::-webkit-details-marker { display: none; }
@@ -70,6 +71,14 @@
     .filter-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
     .filter-button { border: 1px solid #c8d2e5; background: #fff; color: #1f3b6f; padding: 10px 14px; border-radius: 999px; cursor: pointer; transition: all .2s ease; font-weight: 600; }
     .filter-button.active { background: #1f3b6f; color: #fff; border-color: #1f3b6f; }
+    .restaurant-filters-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
+    .category-toggle { display: inline-flex; align-items: center; justify-content: center; border: 1px solid #f1d5e0; background: #fff6f8; color: #7d2f57; padding: 10px 14px; border-radius: 999px; cursor: pointer; transition: background .2s ease, transform .2s ease; font-weight: 700; }
+    .category-toggle::after { content: '▾'; margin-left: 8px; transition: transform .2s ease; }
+    .category-toggle[aria-expanded='false']::after { transform: rotate(-90deg); }
+    .category-toggle:hover { background: #ffe7f3; }
+    .filter-buttons { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; width: 100%; }
+    .filter-buttons.open { max-height: none; }
+    .filter-buttons { overflow: hidden; transition: max-height .28s ease; }
     .list-controls input { width: 100%; max-width: 480px; min-width: 220px; border: 1px solid #f2d6e0; border-radius: 999px; padding: 12px 16px; background: #fff7fb; color:#3b2035; }
     .list-grid { display: grid; gap: 16px; }
     .idea-card { background: #fff7fb; border-radius: 24px; border: 1px solid #f2d6e0; padding: 18px; display: grid; gap: 12px; box-shadow: 0 10px 30px rgba(158,83,110,.06); }
@@ -144,6 +153,7 @@
     .hotel-dot { background: #d3598f; }
     .event-dot { background: #9f4f7b; }
     .idea-dot { background: #f0a7c8; }
+    .restaurant-dot { background: #f57da3; }
     .route-dot { background: #d95c97; }
     .leaflet-container { background: #eef4fb; }
     .custom-popup { font-family: Inter,system-ui,sans-serif; font-size: 0.94rem; line-height: 1.5; color: #3b2035; }
@@ -157,7 +167,8 @@
     .layer-controls input { width: 18px; height:18px; accent-color:#b14d7a; }
     .detail-badge { background: #f1f5fb; border-radius: 16px; padding: 10px 14px; display:flex; align-items:center; gap:8px; color:#365180; font-size:.92rem; }
     @media(max-width:980px){ .tabs { grid-template-columns: 1fr; } }
-    @media(max-width:740px){ .idea-actions { flex-direction: column; align-items: stretch; } }
+    @media(max-width:820px){ .restaurant-filters-top { flex-direction: column; align-items: stretch; } .filter-buttons { max-height: none; } }
+    @media(max-width:740px){ .idea-actions { flex-direction: column; align-items: stretch; } .category-toggle { display: inline-flex; } .filter-buttons { max-height: 0; overflow: hidden; transition: max-height .28s ease; width: 100%; } .filter-buttons.open { max-height: 360px; } }
     @keyframes petal-fall {
       0% { transform: translateY(-40px) rotate(0deg) scale(0.8); opacity: 0.85; }
       30% { opacity: 0.95; }
@@ -177,6 +188,7 @@
     <div class="tabs">
       <button class="tab-button active" data-target="map-panel" id="mapTab">Map view</button>
       <button class="tab-button" data-target="list-panel" id="listTab">Ideas list</button>
+      <button class="tab-button" data-target="restaurants-panel" id="restaurantsTab">Restaurants</button>
     </div>
 
     <div class="panel active" id="map-panel">
@@ -194,11 +206,13 @@
             <div class="legend-item"><span class="legend-dot event-dot"></span> Booked events</div>
             <div class="legend-item"><span class="legend-dot route-dot"></span> Train route</div>
             <div class="legend-item"><span class="legend-dot idea-dot"></span> Instagram idea</div>
+            <div class="legend-item"><span class="legend-dot restaurant-dot"></span> Restaurants</div>
           </div>
           <div class="layer-controls">
             <label><input type="checkbox" checked id="layer-accommodation" /> Show airports / accommodation / events</label>
             <label><input type="checkbox" checked id="layer-trains" /> Show train routes</label>
             <label><input type="checkbox" checked id="layer-ideas" /> Show Instagram ideas</label>
+            <label><input type="checkbox" checked id="layer-restaurants" /> Show restaurants</label>
           </div>
         </aside>
       </div>
@@ -217,6 +231,18 @@
         <input type="search" id="ideaSearch" placeholder="Search ideas by title, city or keyword…" />
       </div>
       <div class="list-grid" id="ideasList"></div>
+    </div>
+    <div class="panel" id="restaurants-panel">
+      <div class="list-controls">
+        <div class="restaurant-filters-top">
+          <button class="category-toggle" type="button" aria-expanded="true">Categories</button>
+          <div class="filter-buttons open" id="restaurantCategoryFilters">
+            <button class="filter-button active" data-category="All" type="button">All categories</button>
+          </div>
+        </div>
+        <input type="search" id="restaurantSearch" placeholder="Search restaurants by name, cuisine, area…" />
+      </div>
+      <div class="list-grid" id="restaurantsList"></div>
     </div>
   </main>
 
@@ -403,12 +429,15 @@
     const accommodationLayer = L.layerGroup().addTo(map);
     const trainLayer = L.layerGroup().addTo(map);
     const ideasLayer = L.layerGroup().addTo(map);
+    const restaurantsLayer = L.layerGroup().addTo(map);
+    const restaurantsData = [];
 
     const iconStyles = {
       Airport: { class:'airport-marker', symbol:'✈' },
       Accommodation: { class:'hotel-marker', symbol:'🛌' },
       Event: { class:'event-marker', symbol:'★' },
-      Idea: { class:'idea-marker', symbol:'•' }
+      Idea: { class:'idea-marker', symbol:'•' },
+      Restaurant: { class:'restaurant-marker', symbol:'🍣' }
     };
 
     function createIcon(type) {
@@ -430,15 +459,21 @@
 
     function buildPopup(item) {
       const lines = [];
-      lines.push(`<div class="custom-popup"><h4>${secureHtml(item.title)}</h4>`);
-      lines.push('<div class="popup-badge"><span>' + secureHtml(item.category || item.type) + '</span>');
+      const title = item.title || item.name || 'Details';
+      lines.push(`<div class="custom-popup"><h4>${secureHtml(title)}</h4>`);
+      lines.push('<div class="popup-badge"><span>' + secureHtml(item.category || item.type || 'Info') + '</span>');
+      if (item.cuisine_type) lines.push(`<span>${secureHtml(item.cuisine_type)}</span>`);
       if (item.city) lines.push(`<span>${secureHtml(item.city)}</span>`);
       if (item.suburb) lines.push(`<span>${secureHtml(item.suburb)}</span>`);
       lines.push('</div>');
       if (item.dates) lines.push(`<div><strong>When:</strong> ${secureHtml(item.dates)}</div>`);
-      if (item.cost) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost)}</div>`);
+      if (item.cost || item.cost_approx) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost || item.cost_approx)}</div>`);
+      if (item.tabelog_rating) lines.push(`<div><strong>Rating:</strong> ${secureHtml(item.tabelog_rating)}</div>`);
+      if (item.table_for_9_likelihood) lines.push(`<div><strong>Group booking:</strong> ${secureHtml(item.table_for_9_likelihood)}</div>`);
       lines.push(`<div style="margin:10px 0;">${secureHtml(item.detail || item.details || item.description || 'No extra details.')}</div>`);
       if (item.link) lines.push(`<div><a href="${secureHtml(item.link)}" target="_blank" rel="noreferrer">Open link</a></div>`);
+      if (item.tabelog_link) lines.push(`<div><a href="${secureHtml(item.tabelog_link)}" target="_blank" rel="noreferrer">Tabelog page</a></div>`);
+      if (item.google_maps_link) lines.push(`<div><a href="${secureHtml(item.google_maps_link)}" target="_blank" rel="noreferrer">Google Maps</a></div>`);
       lines.push('</div>');
       return lines.join('');
     }
@@ -504,6 +539,16 @@
       marker.addTo(accommodationLayer);
     });
 
+    function addRestaurantMarkers() {
+      restaurantsData.forEach(item => {
+        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Restaurant') });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        bindHoverPopup(marker);
+        marker.addTo(restaurantsLayer);
+        item.marker = marker;
+      });
+    }
+
     // Keep references to train polylines so we can highlight by selected leg
     const trainLines = [];
     trainRoutes.forEach(route => {
@@ -530,7 +575,7 @@
     }, 300);
 
     map.on('click', () => {
-      [accommodationLayer, ideasLayer].forEach(layer => {
+      [accommodationLayer, ideasLayer, restaurantsLayer].forEach(layer => {
         layer.eachLayer(item => {
           if (item.closePopup) {
             item.closePopup();
@@ -552,9 +597,51 @@
       if (event.target.checked) map.addLayer(ideasLayer);
       else map.removeLayer(ideasLayer);
     });
+    document.getElementById('layer-restaurants').addEventListener('change', event => {
+      if (event.target.checked) map.addLayer(restaurantsLayer);
+      else map.removeLayer(restaurantsLayer);
+    });
 
     const ideaSearch = document.getElementById('ideaSearch');
     const ideasList = document.getElementById('ideasList');
+    const restaurantSearch = document.getElementById('restaurantSearch');
+    const restaurantsList = document.getElementById('restaurantsList');
+    const restaurantCategoryFilters = document.getElementById('restaurantCategoryFilters');
+    const restaurantCategoryToggle = document.querySelector('.category-toggle');
+    let selectedRestaurantCategory = 'All';
+
+    function loadRestaurants() {
+      fetch('restaurants.json')
+        .then(response => response.ok ? response.json() : Promise.reject(response))
+        .then(data => {
+          const destinations = data.destinations || {};
+          Object.entries(destinations).forEach(([area, items]) => {
+            items.forEach((item, index) => {
+              const parsed = /^([^()]+)(?:\s*\((.+)\))?$/.exec(area) || [];
+              item.area = area;
+              item.city = item.city || (parsed[1] || '').trim();
+              item.suburb = item.suburb || (parsed[2] || '').trim();
+              item.type = 'Restaurant';
+              item.title = item.name;
+              item.id = item.id || `${item.city.toLowerCase().replace(/\s+/g, '-')}-${item.suburb.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+              restaurantsData.push(item);
+            });
+          });
+          addRestaurantMarkers();
+          buildRestaurantCategoryFilters();
+          renderRestaurants();
+          if (restaurantCategoryToggle) {
+            restaurantCategoryToggle.addEventListener('click', () => {
+              const expanded = restaurantCategoryFilters.classList.toggle('open');
+              restaurantCategoryToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            });
+          }
+        })
+        .catch(error => {
+          console.warn('Unable to load restaurant data:', error);
+          restaurantsList.innerHTML = '<p style="color:#70426b;">Restaurant data is unavailable. Please make sure <strong>restaurants.json</strong> is served from the same folder.</p>';
+        });
+    }
 
     function groupIdeasByArea(ideas) {
       const groups = {};
@@ -624,7 +711,23 @@
       if (idea.marker) idea.marker.openPopup();
     }
 
+    function focusOnRestaurant(id) {
+      const restaurant = restaurantsData.find(item => item.id === id);
+      if (!restaurant) return;
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('mapTab').classList.add('active');
+      document.getElementById('map-panel').classList.add('active');
+      if (!map.hasLayer(restaurantsLayer)) {
+        map.addLayer(restaurantsLayer);
+        document.getElementById('layer-restaurants').checked = true;
+      }
+      map.flyTo([restaurant.coordinates.lat, restaurant.coordinates.lng], 14, { duration: 1.2 });
+      if (restaurant.marker) restaurant.marker.openPopup();
+    }
+
     renderIdeas();
+    loadRestaurants();
 
     const legButtons = document.querySelectorAll('#legFilters .filter-button');
     function updateSearchAndFilter() {
@@ -634,6 +737,95 @@
         let visibleCount = 0;
         cards.forEach(card => {
           const matches = card.dataset.search.includes(query) && (selectedLeg === 'All' || card.dataset.leg === selectedLeg);
+          card.style.display = matches ? 'grid' : 'none';
+          if (matches) visibleCount += 1;
+        });
+        group.style.display = visibleCount ? 'block' : 'none';
+        group.open = visibleCount > 0 && query !== '';
+      });
+    }
+
+    function groupRestaurantsByArea(restaurants) {
+      const groups = {};
+      restaurants.forEach(item => {
+        const key = `${item.city}||${item.suburb}`;
+        if (!groups[key]) {
+          groups[key] = { city: item.city, suburb: item.suburb, items: [] };
+        }
+        groups[key].items.push(item);
+      });
+      return Object.values(groups).sort((a, b) => {
+        if (a.city === b.city) return a.suburb.localeCompare(b.suburb);
+        return a.city.localeCompare(b.city);
+      });
+    }
+
+    function buildRestaurantCategoryFilters() {
+      const categories = Array.from(new Set(restaurantsData.map(item => item.category || 'Other'))).sort((a, b) => a.localeCompare(b));
+      restaurantCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.category = category;
+        button.textContent = category;
+        restaurantCategoryFilters.appendChild(button);
+      });
+      restaurantCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          restaurantCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedRestaurantCategory = button.dataset.category;
+          renderRestaurants();
+          updateRestaurantSearch();
+        });
+      });
+    }
+
+    function renderRestaurants() {
+      restaurantsList.innerHTML = '';
+      const filteredRestaurants = restaurantsData.filter(item => selectedRestaurantCategory === 'All' || item.category === selectedRestaurantCategory);
+      const groupedRestaurants = groupRestaurantsByArea(filteredRestaurants);
+      groupedRestaurants.forEach(group => {
+        const details = document.createElement('details');
+        details.className = 'idea-group';
+        details.open = true;
+        const summary = document.createElement('summary');
+        summary.innerHTML = `<span>${group.city} · ${group.suburb}</span><span>${group.items.length} restaurants</span>`;
+        details.appendChild(summary);
+
+        group.items.forEach(item => {
+          const card = document.createElement('article');
+          card.className = 'idea-card';
+          card.id = `restaurant-${item.id}`;
+          card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description].join(' ').toLowerCase();
+          card.dataset.category = item.category.toLowerCase();
+          card.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div>
+                <h3>${item.name}</h3>
+                <div class="idea-meta"><span>${item.category}</span><span>${item.cuisine_type}</span><span>${item.city}</span><span>${item.suburb}</span></div>
+              </div>
+              <a href="${item.google_maps_link}" target="_blank" rel="noreferrer">Map</a>
+            </div>
+            <p>${item.description}</p>
+            <p style="margin:0;color:#526085;"><strong>Cost:</strong> ${item.cost_approx} · <strong>Rating:</strong> ${item.tabelog_rating}</p>
+            <div class="idea-actions"><button type="button" onclick="focusOnRestaurant('${item.id}')">See on Map</button><span class="detail-badge">${item.table_for_9_likelihood}</span></div>
+          `;
+          details.appendChild(card);
+        });
+
+        restaurantsList.appendChild(details);
+      });
+    }
+
+    function updateRestaurantSearch() {
+      const query = restaurantSearch.value.trim().toLowerCase();
+      document.querySelectorAll('#restaurantsList .idea-group').forEach(group => {
+        const cards = group.querySelectorAll('.idea-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matches = card.dataset.search.includes(query);
           card.style.display = matches ? 'grid' : 'none';
           if (matches) visibleCount += 1;
         });
@@ -660,6 +852,7 @@
     });
 
     ideaSearch.addEventListener('input', updateSearchAndFilter);
+    restaurantSearch.addEventListener('input', updateRestaurantSearch);
 
     const mapNotice = document.querySelector('.map-notice');
     const noticeToggle = document.querySelector('.notice-toggle');
