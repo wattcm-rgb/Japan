@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Japan Family Holiday Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff4f7;
+      color: #3b2035;
+      --primary: #d880a2;
+      --primary-dark: #b9376c;
+      --primary-light: #f0a7c8;
+      --surface: #fff7fb;
+      --surface-alt: #fff6f8;
+      --border: #f2d6e0;
+      --text-primary: #3b2035;
+      --text-secondary: #6f4a63;
+      --text-tertiary: #526085;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100vh; position: relative; overflow-x: hidden; }
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, rgba(255,241,246,0.18) 0%, rgba(255,245,250,0.14) 25%, rgba(255,255,255,0.08) 55%, rgba(255,241,247,0.16) 100%);
+      z-index: 0;
+    }
+    
+    /* Header */
+    header { 
+      padding: 20px 16px; 
+      background: var(--surface-alt); 
+      color: #7d2f57; 
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
+    }
+    header h1 { font-size: clamp(1.75rem, 5vw, 2.5rem); line-height: 1.1; letter-spacing: -.03em; font-weight: 800; }
+    .page-subtitle { margin-top: 8px; font-size: 0.9rem; color: #6b3a5c; line-height: 1.4; }
+    
+    /* Main Layout */
+    .main { max-width: 1380px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
+    
+    /* Desktop Tabs (hidden on mobile) */
+    .tabs-desktop { 
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+      gap: 10px; 
+      margin-bottom: 16px; 
+    }
+    @media (min-width: 768px) {
+      .tabs-desktop { display: grid; }
+    }
+    .tab-button { 
+      border: 1px solid var(--border); 
+      background: var(--surface-alt); 
+      color: #7d2f57; 
+      padding: 12px 14px; 
+      border-radius: 12px; 
+      cursor: pointer; 
+      transition: all .2s ease; 
+      font-weight: 600; 
+      text-align: center; 
+      font-size: 0.95rem;
+    }
+    .tab-button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .tab-button:hover:not(.active) { background: #ffe8f2; }
+    
+    /* Mobile Bottom Navigation */
+    .tabs-mobile {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 2px solid var(--border);
+      padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+      z-index: 200;
+      box-shadow: 0 -4px 20px rgba(158,83,110,.12);
+    }
+    @media (min-width: 768px) {
+      .tabs-mobile { display: none; }
+    }
+    .mobile-tab {
+      border: none;
+      background: transparent;
+      padding: 8px 4px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-weight: 600;
+      transition: all .2s;
+    }
+    .mobile-tab.active { color: var(--primary-dark); }
+    .mobile-tab .icon { font-size: 1.5rem; transition: transform .2s; }
+    .mobile-tab.active .icon { transform: scale(1.15); }
+    
+    /* Floating Action Button (Mobile Map shortcut) */
+    .fab {
+      display: none;
+      position: fixed;
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 16px rgba(185, 55, 108, 0.4);
+      cursor: pointer;
+      z-index: 150;
+      font-size: 1.5rem;
+      transition: all .3s;
+    }
+    @media (max-width: 767px) {
+      .fab { display: flex; align-items: center; justify-content: center; }
+      .fab.hidden { opacity: 0; pointer-events: none; }
+    }
+    .fab:active { transform: scale(0.95); }
+    
+    /* Panel */
+    .panel { display: none; }
+    .panel.active { display: block; }
+    @media (max-width: 767px) {
+      .panel { padding-bottom: 80px; } /* Space for bottom nav */
+    }
+    
+    /* Map */
+    #map-panel { min-height: 600px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
+    .map-wrapper { position: relative; min-height: 600px; }
+    #map { width: 100%; height: 100%; min-height: 600px; }
+    
+    /* Compact Map Legend (mobile-friendly) */
+    .map-legend-compact {
+      position: absolute;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,248,250,0.98);
+      backdrop-filter: blur(8px);
+      padding: 8px 16px;
+      border-radius: 999px;
+      box-shadow: 0 4px 16px rgba(185,57,108,.15);
+      z-index: 999;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.75rem;
+      max-width: 90vw;
+    }
+    @media (min-width: 768px) {
+      .map-legend-compact { font-size: 0.85rem; gap: 16px; }
+    }
+    .legend-item-compact {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+    .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .hotel-dot { background: #d3598f; }
+    .event-dot { background: #9f4f7b; }
+    .idea-dot { background: #f0a7c8; }
+    .restaurant-dot { background: #f57da3; }
+    .attraction-dot { background: #8eb9d4; }
+    .animal-dot { background: #95c46b; }
+    
+    /* Layer Controls Toggle */
+    .layer-controls-toggle {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,248,250,0.98);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 999;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      box-shadow: 0 2px 8px rgba(158,83,110,.1);
+    }
+    .layer-controls-panel {
+      position: absolute;
+      top: 60px;
+      right: 16px;
+      background: rgba(255,248,250,0.98);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      z-index: 998;
+      box-shadow: 0 8px 24px rgba(158,83,110,.15);
+      display: none;
+      min-width: 220px;
+    }
+    .layer-controls-panel.active { display: block; }
+    .layer-controls-panel label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .layer-controls-panel input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary-dark);
+    }
+    
+    /* Filters - Sticky on scroll */
+    .list-controls {
+      position: sticky;
+      top: 75px;
+      background: var(--surface-alt);
+      padding: 16px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(158,83,110,.08);
+    }
+    @media (max-width: 767px) {
+      .list-controls { top: 65px; padding: 12px; }
+    }
+    
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .filter-count {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+    .expand-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      transition: all .2s;
+    }
+    .expand-toggle:hover { background: var(--surface); }
+    
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      min-width: 60px;
+    }
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
+    }
+    .filter-button {
+      border: 1px solid #c8d2e5;
+      background: #fff;
+      color: #1f3b6f;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-weight: 600;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .filter-button.active { background: #1f3b6f; color: #fff; border-color: #1f3b6f; }
+    .filter-button:hover:not(.active) { background: #e8f0fc; }
+    
+    .search-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: var(--surface);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      margin-top: 10px;
+    }
+    .search-input::placeholder { color: #a58798; }
+    
+    /* Loading Skeleton */
+    .skeleton-card {
+      background: linear-gradient(90deg, #f5f5f5 25%, #e8e8e8 50%, #f5f5f5 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 20px;
+      height: 200px;
+      margin-bottom: 16px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-secondary);
+    }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+    .empty-state-text { font-size: 0.95rem; line-height: 1.6; }
+    
+    /* Error State */
+    .error-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: #fff3f3;
+      border: 1px solid #ffd0d0;
+      border-radius: 16px;
+      margin: 20px 0;
+    }
+    .error-state-icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .error-state-title { font-size: 1.1rem; font-weight: 700; color: #c53030; margin-bottom: 8px; }
+    .error-state-text { font-size: 0.9rem; color: #744; margin-bottom: 16px; }
+    .retry-button {
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .2s;
+    }
+    .retry-button:hover { background: #8f2b56; transform: translateY(-1px); }
+    
+    /* Collapsible Groups */
+    .idea-group {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 4px 12px;
+      background: var(--surface);
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(158,83,110,.04);
+    }
+    .idea-group summary {
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 12px;
+      font-weight: 700;
+      padding: 12px 4px;
+      color: #7d2f57;
+    }
+    .idea-group summary::-webkit-details-marker { display: none; }
+    .idea-group summary::after { content: '▼'; transition: transform .2s ease; font-size: 0.8rem; }
+    .idea-group[open] summary::after { transform: rotate(-180deg); }
+    .idea-group summary span:first-child { font-size: 0.95rem; }
+    .idea-group summary span:last-child { color: var(--text-tertiary); font-size: 0.85rem; font-weight: 600; }
+    
+    /* Card - Redesigned for mobile */
+    .idea-card {
+      background: var(--surface);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      margin: 8px 0;
+      box-shadow: 0 2px 8px rgba(158,83,110,.04);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .card-title-section { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #4a214d;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .card-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      white-space: nowrap;
+    }
+    .card-price {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+    }
+    
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      padding: 4px 10px;
+      background: #f7e3ec;
+      border-radius: 999px;
+    }
+    .meta-item .icon { font-size: 1rem; }
+    
+    .card-description {
+      color: var(--text-tertiary);
+      line-height: 1.6;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+    
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--primary-dark);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      font-size: 0.9rem;
+      flex: 1;
+      min-width: 120px;
+    }
+    .btn-primary:hover { background: #8f2b56; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary-dark);
+      border: 1px solid var(--primary-dark);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover { background: var(--surface-alt); }
+    
+    /* Map Markers */
+    .custom-marker {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 800;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.9);
+      border: 2px solid #fff;
+    }
+    .hotel-marker { background: #d3598f; }
+    .event-marker { background: #9f4f7b; }
+    .idea-marker { background: #f0a7c8; }
+    .restaurant-marker { background: #f57da3; }
+    .attraction-marker { background: #8eb9d4; }
+    .animal-marker { background: #95c46b; }
+    
+    /* Popup */
+    .custom-popup {
+      font-family: Inter,system-ui,sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-primary);
+      max-width: 280px;
+    }
+    .custom-popup h4 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+      color: #5a214d;
+      line-height: 1.3;
+    }
+    .custom-popup .popup-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .custom-popup .popup-badges span {
+      background: rgba(211,112,141,.12);
+      color: #7d2f57;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .popup-field {
+      margin: 6px 0;
+      font-size: 0.85rem;
+    }
+    .popup-field strong {
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+    .custom-popup a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .custom-popup a:hover { text-decoration: underline; }
+    
+    /* Sakura Effects */
+    .sakra-petal {
+      position: fixed;
+      top: -80px;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.7;
+      animation: petal-fall linear infinite;
+      background-image:
+        radial-gradient(circle at 52% 12%, rgba(255,243,250,0.96), rgba(255,197,226,0.92) 24%, transparent 28%),
+        radial-gradient(circle at 28% 38%, rgba(255,243,250,0.96), rgba(255,199,226,0.92) 22%, transparent 26%),
+        radial-gradient(circle at 74% 38%, rgba(255,243,250,0.96), rgba(255,199,226,0.92) 22%, transparent 26%);
+      border-radius: 50%;
+      filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+    }
+    @keyframes petal-fall {
+      0% { transform: translateY(-40px) rotate(0deg); opacity: 0.6; }
+      100% { transform: translateY(110vh) translateX(20px) rotate(480deg); opacity: 0; }
+    }
+    
+    .leaflet-container { background: #eef4fb; }
+    
+    @media (max-width: 767px) {
+      .card-header { flex-direction: column; align-items: start; }
+      .card-rating { margin-top: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sakura-petals"></div>
+  
+  <header>
+    <h1>Japan Holiday Dashboard</h1>
+    <p class="page-subtitle">Watt and Pollard Family Trip • Tokyo, Hakone, Kyoto, Hiroshima & Osaka</p>
+    <div id="cors-warning" style="display: none; background: #fff3cd; border: 2px solid #ffc107; border-radius: 8px; padding: 12px; margin-top: 12px; color: #856404;">
+      <strong>⚠️ Local File Notice:</strong> External data files failed to load due to browser security restrictions. To view full data, serve via a local server:
+      <code style="display: block; margin-top: 8px; background: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">python -m http.server 8000</code>
+      or
+      <code style="display: block; margin-top: 4px; background: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">npx serve</code>
+    </div>
+  </header>
+  
+  <main class="main">
+    <!-- Desktop Tabs -->
+    <div class="tabs-desktop">
+      <button class="tab-button active" data-target="map-panel">🗺️ Map view</button>
+      <button class="tab-button" data-target="list-panel">💡 Ideas</button>
+      <button class="tab-button" data-target="restaurants-panel">🍣 Restaurants</button>
+      <button class="tab-button" data-target="attractions-panel">🎯 Attractions</button>
+      <button class="tab-button" data-target="animalcafes-panel">🐾 Animal Cafes</button>
+      <button class="tab-button" data-target="fulldata-panel">📋 All Data</button>
+    </div>
+    
+    <!-- Map Panel -->
+    <div class="panel active" id="map-panel">
+      <div class="map-wrapper">
+        <div id="map"></div>
+        <button class="layer-controls-toggle" id="layerToggle">🔘 Layers</button>
+        <div class="layer-controls-panel" id="layerPanel">
+          <label><input type="checkbox" checked id="layer-accommodation" /> Accommodation</label>
+          <label><input type="checkbox" checked id="layer-ideas" /> Instagram Ideas</label>
+          <label><input type="checkbox" checked id="layer-restaurants" /> Restaurants</label>
+          <label><input type="checkbox" checked id="layer-attractions" /> Attractions</label>
+          <label><input type="checkbox" checked id="layer-animalcafes" /> Animal Cafes</label>
+        </div>
+        <div class="map-legend-compact">
+          <div class="legend-item-compact"><span class="legend-dot hotel-dot"></span>Stay</div>
+          <div class="legend-item-compact"><span class="legend-dot event-dot"></span>Event</div>
+          <div class="legend-item-compact"><span class="legend-dot idea-dot"></span>Idea</div>
+          <div class="legend-item-compact"><span class="legend-dot restaurant-dot"></span>Food</div>
+          <div class="legend-item-compact"><span class="legend-dot attraction-dot"></span>Sight</div>
+          <div class="legend-item-compact"><span class="legend-dot animal-dot"></span>Cafe</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Other Panels (will be populated by JS) -->
+    <div class="panel" id="list-panel"></div>
+    <div class="panel" id="restaurants-panel"></div>
+    <div class="panel" id="attractions-panel"></div>
+    <div class="panel" id="animalcafes-panel"></div>
+    <div class="panel" id="fulldata-panel"></div>
+  </main>
+  
+  <!-- Mobile Bottom Navigation -->
+  <nav class="tabs-mobile">
+    <button class="mobile-tab active" data-target="map-panel">
+      <span class="icon">🗺️</span>
+      <span>Map</span>
+    </button>
+    <button class="mobile-tab" data-target="restaurants-panel">
+      <span class="icon">🍣</span>
+      <span>Food</span>
+    </button>
+    <button class="mobile-tab" data-target="attractions-panel">
+      <span class="icon">🎯</span>
+      <span>Sights</span>
+    </button>
+    <button class="mobile-tab" data-target="fulldata-panel">
+      <span class="icon">📋</span>
+      <span>All</span>
+    </button>
+  </nav>
+  
+  <!-- Floating Action Button -->
+  <button class="fab hidden" id="fabMap">🗺️</button>
+  
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // ============================================
+    // PHASE 1 & 2: STATE MANAGEMENT & UTILITIES
+    // ============================================
+    
+    const appState = {
+      activeTab: 'map-panel',
+      filters: {
+        ideas: { leg: 'All', search: '' },
+        restaurants: { city: 'All', category: 'All', search: '' },
+        attractions: { city: 'All', category: 'All', search: '' },
+        animalCafes: { city: 'All', category: 'All', search: '' },
+        fullData: { city: 'All', category: 'All', search: '' }
+      },
+      data: {
+        accommodations: [],
+        ideas: [],
+        restaurants: [],
+        attractions: [],
+        animalCafes: [],
+        fullData: []
+      },
+      loading: {
+        restaurants: true,
+        attractions: true,
+        animalCafes: true
+      },
+      expandedGroups: new Set()
+    };
+    
+    // Debounce utility
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+    
+    // Escape HTML
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text).replace(/[&<>"']/g, (s) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[s]));
+    }
+    
+    // Normalize data structure
+    function normalizeItem(item, type) {
+      return {
+        ...item,
+        type: type,
+        title: item.title || item.name,
+        location: {
+          lat: item.lat || item.coordinates?.lat || item.latitude,
+          lng: item.lng || item.coordinates?.lng || item.longitude
+        },
+        primaryLink: item.google_maps_link || item.google_map_link || item.link,
+        secondaryLink: item.website || item.link,
+        cost: item.cost_approx || item.approx_cost || item.cost,
+        wait: item['Approx Wait time'] || item.approx_wait_time || item.approx_wait || item.wait
+      };
+    }
+    
+    // ============================================
+    // DATA LOADING
+    // ============================================
+    
+    const accommodations = [
+      { id: 'urban-stay', type:'Accommodation', title:'Urban Stay Shinjuku East', city:'Tokyo', suburb:'Shinjuku', dates:'11–16 Jul 2026', lat:35.6912, lng:139.7036, details:'Core Tokyo accommodation for both families with 3LDK rooms near Shinjuku East station.', link:'https://www.booking.com/hotel/jp/urban-stay-shinjuku-east.ja.html', category:'Accommodation' },
+      { id: 'villa-liberte', type:'Accommodation', title:'Villa Liberte Hakone Gora', city:'Hakone', suburb:'Gora', dates:'16–17 Jul 2026', lat:35.2416, lng:139.0273, details:'Quiet Hakone stay booked in the core itinerary, close to hot springs and scenic walking trails.', link:'https://www.booking.com/hotel/jp/libertexiang-gen-qiang-luo-petutotoyi-xu-nisu-bo-da-ren-shu.debbq.en-gb.html', category:'Accommodation' },
+      { id: 'tsumugi-kyoto', type:'Accommodation', title:'Tsumugi Hachijo-minamotocho', city:'Kyoto', suburb:'Hachijominamotocho', dates:'17–18 Jul 2026', lat:34.9818, lng:135.7505, details:'Kyoto accommodation for the 17th and 18th July stay in the core itinerary.', link:'http://tsumugi-kyoto.jp/facility/313/?lang=en', category:'Accommodation' },
+      { id: 'hiroshima-hotel', type:'Accommodation', title:'fav HIROSHIMA HEIWAODORI', city:'Hiroshima', suburb:'Heiwaodori', dates:'19–21 Jul 2026', lat:34.3920, lng:132.4597, details:'Hiroshima accommodation in the core itinerary with easy access to city attractions.', link:'https://fav-hotels.com/hotels/hiroshimaheiwaodori/', category:'Accommodation' },
+      { id: 'maguro-house', type:'Accommodation', title:'Maguro House Osaka', city:'Osaka', suburb:'Namba', dates:'21–27 Jul 2026', lat:34.6648, lng:135.5011, details:'Main Osaka stay listed in the itinerary after Hiroshima, located in the Namba entertainment district.', link:'https://maguro-house.com/', category:'Accommodation' },
+      { id: 'omo-kansai', type:'Accommodation', title:'OMO Kansai Airport by Hoshino Resorts', city:'Osaka', suburb:'Rinku Town (near KIX)', dates:'27 Jul 2026', lat:34.4103473, lng:135.3009275, details:'Airport hotel one station from Kansai International Airport (Rinku Town).', link:'https://hoshinoresorts.com/en/hotels/omokansaiairport/', category:'Accommodation' },
+      { id: 'teamlab', type:'Event', title:'teamLab Planets Tokyo', city:'Tokyo', suburb:'Toyosu/Ueno area', dates:'13 Jul 2026 13:30', lat:35.6252, lng:139.7740, details:'Planned Tokyo exhibition visit from the CSV itinerary.', link:'https://www.teamlab.art/', category:'Event' },
+      { id: 'arashiyama', type:'Event', title:'Hozugawa River boat + Arashiyama Bamboo Forest', city:'Kyoto', suburb:'Arashiyama', dates:'Sat (Kyoto)', lat:35.0094, lng:135.6666, details:'Kyoto day trip bucket list item from the CSV itinerary.', link:'https://www.japan-guide.com/e/e3901.html', category:'Event' },
+      { id: 'universal', type:'Event', title:'Universal Studios Japan', city:'Osaka', suburb:'Sakishima', dates:'Sat (Osaka)', lat:34.6655, lng:135.4296, details:'Booked theme park day in Osaka from the CSV itinerary.', link:'https://www.usj.co.jp/e/', category:'Event' }
+    ].map(item => normalizeItem(item, item.type));
+    
+    const instagramIdeas = [
+      { id:'yadokari-namba', title:'Yadokari Namba Vintage Market', city:'Osaka', suburb:'Namba', description:'Vintage watches, film cameras, pop culture collectibles and antiques in a compact Namba shopping market.', age:'All Ages', cost:'£0+ purchases', link:'https://www.instagram.com/reel/DZUTaePp-Dq/', lat:35.6649, lng:135.5013, source:'yadokarinambahotel', detail:'A retro Osaka market idea that is fun for collectors and kids who enjoy quirky treasures.' },
+      { id:'night-shrines', title:'Night Shrines Edition', city:'Kyoto', suburb:'Gion area', description:'Illuminated shrine walk after dark, including Yasaka Shrine and nearby atmospheric temple paths.', age:'All Ages', cost:'£5 estimate', link:'https://www.instagram.com/reel/DXF_2jRTz-4/', lat:35.0037, lng:135.7788, source:'hiro_films_jp', detail:'A magical evening shrine tour that works well as a Kyoto night outing.' },
+      { id:'hanayashiki', title:'Asakusa Hanayashiki amusement park', city:'Tokyo', suburb:'Asakusa', description:'Japan's oldest amusement park with nostalgic rides, retro charm, and family-friendly thrills.', age:'All Ages', cost:'£20', link:'https://www.instagram.com/reel/DZU_XQ3hv0X/', lat:35.7142, lng:139.7966, source:'daddy.xj', detail:'An iconic Tokyo attraction perfect for the younger siblings and teenagers alike.' }
+    ].map(item => normalizeItem(item, 'Instagram Idea'));
+    
+    appState.data.accommodations = accommodations;
+    appState.data.ideas = instagramIdeas;
+    
+    // Load external data
+    async function loadData() {
+      console.log('Loading data...');
+      try {
+        const [restaurantsRes, attractionsRes, animalCafesRes] = await Promise.allSettled([
+          fetch('restaurants.json').then(r => r.ok ? r.json() : Promise.reject(r)),
+          fetch('attractions_by_location.json').then(r => r.ok ? r.json() : Promise.reject(r)),
+          fetch('animal_cafes.json').then(r => r.ok ? r.json() : Promise.reject(r))
+        ]);
+        
+        console.log('Fetch results:', {
+          restaurants: restaurantsRes.status,
+          attractions: attractionsRes.status,
+          animalCafes: animalCafesRes.status
+        });
+        
+        // Check if any failed - likely due to CORS with file:// protocol
+        const anyFailed = [restaurantsRes, attractionsRes, animalCafesRes].some(r => r.status === 'rejected');
+        if (anyFailed) {
+          console.warn('Some data files failed to load. This is expected when opening HTML directly from file system.');
+          document.getElementById('cors-warning').style.display = 'block';
+        }
+        
+        // Process restaurants
+        if (restaurantsRes.status === 'fulfilled') {
+          const destinations = restaurantsRes.value.destinations || {};
+          Object.entries(destinations).forEach(([area, items]) => {
+            items.forEach((item, index) => {
+              const parsed = /^([^()]+)(?:\s*\((.+)\))?$/.exec(area) || [];
+              item.area = area;
+              item.city = item.city || (parsed[1] || '').trim();
+              item.suburb = item.suburb || (parsed[2] || '').trim();
+              item.id = item.id || `${item.city.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+              appState.data.restaurants.push(normalizeItem(item, 'Restaurant'));
+            });
+          });
+          appState.loading.restaurants = false;
+          console.log(`Loaded ${appState.data.restaurants.length} restaurants`);
+        } else {
+          console.warn('Failed to load restaurants:', restaurantsRes.reason);
+          appState.loading.restaurants = false;
+        }
+        
+        // Process attractions
+        if (attractionsRes.status === 'fulfilled') {
+          const locations = attractionsRes.value.locations || {};
+          Object.entries(locations).forEach(([city, groups]) => {
+            Object.entries(groups).forEach(([groupName, items]) => {
+              items.forEach((item, index) => {
+                item.city = city;
+                item.category = groupName === 'top_10' ? 'Top 10' : groupName === 'hidden_gems' ? 'Hidden gems' : groupName;
+                item.id = item.id || `${city.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+                appState.data.attractions.push(normalizeItem(item, 'Attraction'));
+              });
+            });
+          });
+          appState.loading.attractions = false;
+          console.log(`Loaded ${appState.data.attractions.length} attractions`);
+        } else {
+          console.warn('Failed to load attractions:', attractionsRes.reason);
+          appState.loading.attractions = false;
+        }
+        
+        // Process animal cafes
+        if (animalCafesRes.status === 'fulfilled') {
+          const cities = animalCafesRes.value.cities || {};
+          Object.entries(cities).forEach(([city, items]) => {
+            items.forEach((item, index) => {
+              item.city = city;
+              item.category = item.animals && item.animals.length ? item.animals[0] : 'Animal Cafe';
+              item.id = item.id || `${city.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+              appState.data.animalCafes.push(normalizeItem(item, 'Animal Cafe'));
+            });
+          });
+          appState.loading.animalCafes = false;
+          console.log(`Loaded ${appState.data.animalCafes.length} animal cafes`);
+        } else {
+          console.warn('Failed to load animal cafes:', animalCafesRes.reason);
+          appState.loading.animalCafes = false;
+        }
+        
+        // Build full data
+        buildFullData();
+        console.log(`Built full data: ${appState.data.fullData.length} total items`);
+        
+        // Initialize all tabs - this should always happen even if JSON files fail
+        console.log('Initializing tabs...');
+        initializeAllTabs();
+        console.log('Initialization complete!');
+        
+      } catch (error) {
+        console.error('Critical error loading data:', error);
+        // Still try to initialize with whatever data we have
+        buildFullData();
+        initializeAllTabs();
+      }
+    }
+    
+    function buildFullData() {
+      appState.data.fullData = [
+        ...appState.data.accommodations.map(i => ({...i, category: i.category || i.type})),
+        ...appState.data.ideas.map(i => ({...i, category: 'Instagram Idea'})),
+        ...appState.data.restaurants.map(i => ({...i, category: i.category || 'Restaurant'})),
+        ...appState.data.attractions.map(i => ({...i, category: i.category || 'Attraction'})),
+        ...appState.data.animalCafes.map(i => ({...i, category: i.category || 'Animal Cafe'}))
+      ];
+    }
+    
+    // ============================================
+    // UI RENDERING
+    // ============================================
+    
+    function showLoading(panelId) {
+      const panel = document.getElementById(panelId);
+      panel.innerHTML = `
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      `;
+    }
+    
+    function showEmpty(panelId, message = 'No results found', suggestion = 'Try adjusting your filters') {
+      const panel = document.getElementById(panelId);
+      const existing = panel.querySelector('.list-grid') || panel;
+      existing.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">😔</div>
+          <div class="empty-state-title">${message}</div>
+          <div class="empty-state-text">${suggestion}</div>
+        </div>
+      `;
+    }
+    
+    function showError(panelId, title, message) {
+      const panel = document.getElementById(panelId);
+      panel.innerHTML = `
+        <div class="error-state">
+          <div class="error-state-icon">⚠️</div>
+          <div class="error-state-title">${title}</div>
+          <div class="error-state-text">${message}</div>
+          <button class="retry-button" onclick="location.reload()">Retry</button>
+        </div>
+      `;
+    }
+    
+    // ============================================
+    // TAB DATA CLASS - Shared rendering logic
+    // ============================================
+    
+    class DataTab {
+      constructor(config) {
+        this.name = config.name;
+        this.panelId = config.panelId;
+        this.data = config.data;
+        this.filters = config.filters;
+        this.groupBy = config.groupBy || 'city';
+        this.renderCard = config.renderCard;
+        this.searchFields = config.searchFields || ['title', 'city', 'category'];
+      }
+      
+      render() {
+        const panel = document.getElementById(this.panelId);
+        
+        // Create controls
+        const controlsHtml = this.buildControls();
+        const listGridId = `${this.name}-list`;
+        
+        panel.innerHTML = `
+          ${controlsHtml}
+          <div class="list-grid" id="${listGridId}"></div>
+        `;
+        
+        // Attach event listeners
+        this.attachListeners();
+        
+        // Render items
+        this.updateDisplay();
+      }
+      
+      buildControls() {
+        const cities = [...new Set(this.data().map(i => i.city))].sort();
+        const categories = [...new Set(this.data()
+          .filter(i => this.filters.city === 'All' || i.city === this.filters.city)
+          .map(i => i.category))].sort();
+        
+        return `
+          <div class="list-controls">
+            <div class="filters-header">
+              <span class="filter-count" id="${this.name}-count">Loading...</span>
+              <button class="expand-toggle" data-tab="${this.name}">Expand All</button>
+            </div>
+            <div class="filter-row">
+              <span class="filter-label">City:</span>
+              <div class="filter-buttons" data-type="city" data-tab="${this.name}">
+                <button class="filter-button active" data-value="All">All</button>
+                ${cities.map(c => `<button class="filter-button" data-value="${c}">${c}</button>`).join('')}
+              </div>
+            </div>
+            <div class="filter-row">
+              <span class="filter-label">Type:</span>
+              <div class="filter-buttons" data-type="category" data-tab="${this.name}">
+                <button class="filter-button active" data-value="All">All</button>
+                ${categories.map(c => `<button class="filter-button" data-value="${c}">${c}</button>`).join('')}
+              </div>
+            </div>
+            <input type="search" class="search-input" placeholder="Search..." data-tab="${this.name}" />
+          </div>
+        `;
+      }
+      
+      attachListeners() {
+        // Search with debounce
+        const searchInput = document.querySelector(`input[data-tab="${this.name}"]`);
+        if (searchInput) {
+          searchInput.addEventListener('input', debounce((e) => {
+            this.filters.search = e.target.value.toLowerCase();
+            this.updateDisplay();
+          }, 300));
+        }
+        
+        // Expand/collapse toggle
+        const expandToggle = document.querySelector(`.expand-toggle[data-tab="${this.name}"]`);
+        if (expandToggle) {
+          expandToggle.addEventListener('click', () => {
+            const groups = document.querySelectorAll(`#${this.name}-list .idea-group`);
+            const allOpen = Array.from(groups).every(g => g.open);
+            groups.forEach(g => g.open = !allOpen);
+            expandToggle.textContent = allOpen ? 'Expand All' : 'Collapse All';
+          });
+        }
+      }
+      
+      updateDisplay() {
+        const filtered = this.getFilteredData();
+        const grouped = this.groupData(filtered);
+        const listGrid = document.getElementById(`${this.name}-list`);
+        
+        // Update count
+        const count = document.getElementById(`${this.name}-count`);
+        if (count) {
+          count.textContent = `Showing ${filtered.length} of ${this.data().length}`;
+        }
+        
+        if (filtered.length === 0) {
+          showEmpty(this.panelId, 'No results found', 'Try adjusting your filters or search term');
+          return;
+        }
+        
+        listGrid.innerHTML = '';
+        
+        Object.entries(grouped).forEach(([groupName, items], index) => {
+          const details = document.createElement('details');
+          details.className = 'idea-group';
+          details.open = index < 2; // Open first 2 groups by default
+          
+          const summary = document.createElement('summary');
+          summary.innerHTML = `<span>${groupName}</span><span>${items.length} items</span>`;
+          details.appendChild(summary);
+          
+          items.forEach(item => {
+            const card = this.renderCard(item);
+            details.appendChild(card);
+          });
+          
+          listGrid.appendChild(details);
+        });
+      }
+      
+      getFilteredData() {
+        return this.data().filter(item => {
+          // City filter
+          if (this.filters.city !== 'All' && item.city !== this.filters.city) return false;
+          
+          // Category filter
+          if (this.filters.category !== 'All' && item.category !== this.filters.category) return false;
+          
+          // Search
+          if (this.filters.search) {
+            const searchText = this.searchFields.map(field => {
+              if (field.includes('.')) {
+                const parts = field.split('.');
+                return parts.reduce((obj, part) => obj?.[part], item);
+              }
+              return item[field];
+            }).join(' ').toLowerCase();
+            if (!searchText.includes(this.filters.search)) return false;
+          }
+          
+          return true;
+        });
+      }
+      
+      groupData(items) {
+        const groups = {};
+        items.forEach(item => {
+          const key = item[this.groupBy] || 'Other';
+          if (!groups[key]) groups[key] = [];
+          groups[key].push(item);
+        });
+        return groups;
+      }
+    }
+    
+    // ============================================
+    // CARD RENDERERS
+    // ============================================
+    
+    function renderRestaurantCard(item) {
+      const card = document.createElement('article');
+      card.className = 'idea-card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title-section">
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            <div class="card-subtitle">
+              <span>${escapeHtml(item.city)}</span>
+              ${item.suburb ? `<span>• ${escapeHtml(item.suburb)}</span>` : ''}
+            </div>
+          </div>
+          <div>
+            ${item.tabelog_rating ? `<div class="card-rating">⭐ ${escapeHtml(item.tabelog_rating)}</div>` : ''}
+            ${item.cost ? `<div class="card-price">${escapeHtml(item.cost)}</div>` : ''}
+          </div>
+        </div>
+        <div class="card-meta">
+          ${item.cuisine_type ? `<span class="meta-item"><span class="icon">🍽️</span>${escapeHtml(item.cuisine_type)}</span>` : ''}
+          ${item.category ? `<span class="meta-item">${escapeHtml(item.category)}</span>` : ''}
+          ${item.wait ? `<span class="meta-item"><span class="icon">⏱️</span>${escapeHtml(item.wait)}</span>` : ''}
+        </div>
+        <div class="card-description">${escapeHtml(item.description || '')}</div>
+        <div class="card-actions">
+          <button class="btn-primary" onclick="focusOnMap('${item.id}', 'Restaurant')">📍 View on Map</button>
+          ${item.primaryLink ? `<a href="${escapeHtml(item.primaryLink)}" target="_blank" class="btn-secondary">🔗 Directions</a>` : ''}
+        </div>
+      `;
+      return card;
+    }
+    
+    function renderAttractionCard(item) {
+      const card = document.createElement('article');
+      card.className = 'idea-card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title-section">
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            <div class="card-subtitle">
+              <span>${escapeHtml(item.city)}</span>
+              ${item.category ? `<span>• ${escapeHtml(item.category)}</span>` : ''}
+            </div>
+          </div>
+          ${item.cost ? `<div class="card-price">${escapeHtml(item.cost)}</div>` : ''}
+        </div>
+        <div class="card-meta">
+          ${item.booking_requirement ? `<span class="meta-item"><span class="icon">📅</span>${escapeHtml(item.booking_requirement)}</span>` : ''}
+          ${item.rating?.google ? `<span class="meta-item">⭐ ${escapeHtml(item.rating.google)}</span>` : ''}
+        </div>
+        <div class="card-description">${escapeHtml(item.description || item.detail || '')}</div>
+        <div class="card-actions">
+          <button class="btn-primary" onclick="focusOnMap('${item.id}', 'Attraction')">📍 View on Map</button>
+          ${item.secondaryLink ? `<a href="${escapeHtml(item.secondaryLink)}" target="_blank" class="btn-secondary">🌐 Website</a>` : ''}
+        </div>
+      `;
+      return card;
+    }
+    
+    function renderAnimalCafeCard(item) {
+      const card = document.createElement('article');
+      card.className = 'idea-card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title-section">
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            <div class="card-subtitle">
+              <span>${escapeHtml(item.city)}</span>
+              ${item.category ? `<span>• ${escapeHtml(item.category)}</span>` : ''}
+            </div>
+          </div>
+          ${item.cost ? `<div class="card-price">${escapeHtml(item.cost)}</div>` : ''}
+        </div>
+        <div class="card-meta">
+          ${item.animals?.length ? `<span class="meta-item"><span class="icon">🐾</span>${escapeHtml(item.animals.join(', '))}</span>` : ''}
+          ${item.booking_requirement ? `<span class="meta-item"><span class="icon">📅</span>${escapeHtml(item.booking_requirement)}</span>` : ''}
+        </div>
+        <div class="card-description">${escapeHtml(item.description || item.detail || '')}</div>
+        <div class="card-actions">
+          <button class="btn-primary" onclick="focusOnMap('${item.id}', 'Animal Cafe')">📍 View on Map</button>
+          ${item.secondaryLink ? `<a href="${escapeHtml(item.secondaryLink)}" target="_blank" class="btn-secondary">🌐 Website</a>` : ''}
+        </div>
+      `;
+      return card;
+    }
+    
+    function renderFullDataCard(item) {
+      const card = document.createElement('article');
+      card.className = 'idea-card';
+      
+      // Type-specific meta
+      let metaHtml = '';
+      if (item.type === 'Restaurant') {
+        metaHtml = `
+          ${item.cuisine_type ? `<span class="meta-item">🍽️ ${escapeHtml(item.cuisine_type)}</span>` : ''}
+          ${item.wait ? `<span class="meta-item">⏱️ ${escapeHtml(item.wait)}</span>` : ''}
+        `;
+      } else if (item.type === 'Attraction' || item.type === 'Animal Cafe') {
+        metaHtml = `
+          ${item.booking_requirement ? `<span class="meta-item">📅 ${escapeHtml(item.booking_requirement)}</span>` : ''}
+          ${item.animals?.length ? `<span class="meta-item">🐾 ${escapeHtml(item.animals.join(', '))}</span>` : ''}
+        `;
+      } else if (item.type === 'Accommodation' || item.type === 'Event') {
+        metaHtml = `
+          ${item.dates ? `<span class="meta-item">📅 ${escapeHtml(item.dates)}</span>` : ''}
+        `;
+      }
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title-section">
+            <div class="card-title">${escapeHtml(item.title)}</div>
+            <div class="card-subtitle">
+              <span>${escapeHtml(item.type)}</span>
+              <span>• ${escapeHtml(item.city)}</span>
+            </div>
+          </div>
+          ${item.cost ? `<div class="card-price">${escapeHtml(item.cost)}</div>` : ''}
+        </div>
+        <div class="card-meta">${metaHtml}</div>
+        <div class="card-description">${escapeHtml(item.description || item.details || item.detail || '')}</div>
+        <div class="card-actions">
+          <button class="btn-primary" onclick="focusOnMap('${item.id}', '${item.type}')">📍 View on Map</button>
+          ${item.primaryLink || item.secondaryLink ? `<a href="${escapeHtml(item.primaryLink || item.secondaryLink)}" target="_blank" class="btn-secondary">🔗 Link</a>` : ''}
+        </div>
+      `;
+      return card;
+    }
+    
+    // ============================================
+    // INITIALIZE TABS
+    // ============================================
+    
+    // Store tab instances globally
+    window.tabInstances = {};
+    
+    function initializeAllTabs() {
+      // Restaurants tab
+      window.tabInstances.restaurants = new DataTab({
+        name: 'restaurants',
+        panelId: 'restaurants-panel',
+        data: () => appState.data.restaurants,
+        filters: appState.filters.restaurants,
+        groupBy: 'city',
+        renderCard: renderRestaurantCard,
+        searchFields: ['title', 'city', 'suburb', 'cuisine_type', 'description']
+      });
+      window.tabInstances.restaurants.render();
+      
+      // Attractions tab
+      window.tabInstances.attractions = new DataTab({
+        name: 'attractions',
+        panelId: 'attractions-panel',
+        data: () => appState.data.attractions,
+        filters: appState.filters.attractions,
+        groupBy: 'city',
+        renderCard: renderAttractionCard,
+        searchFields: ['title', 'city', 'category', 'description']
+      });
+      window.tabInstances.attractions.render();
+      
+      // Animal Cafes tab
+      window.tabInstances.animalCafes = new DataTab({
+        name: 'animalCafes',
+        panelId: 'animalcafes-panel',
+        data: () => appState.data.animalCafes,
+        filters: appState.filters.animalCafes,
+        groupBy: 'city',
+        renderCard: renderAnimalCafeCard,
+        searchFields: ['title', 'city', 'category', 'description', 'animals']
+      });
+      window.tabInstances.animalCafes.render();
+      
+      // Full Data tab
+      window.tabInstances.fullData = new DataTab({
+        name: 'fullData',
+        panelId: 'fulldata-panel',
+        data: () => appState.data.fullData,
+        filters: appState.filters.fullData,
+        groupBy: 'city',
+        renderCard: renderFullDataCard,
+        searchFields: ['title', 'city', 'type', 'category', 'description']
+      });
+      window.tabInstances.fullData.render();
+      
+      // Ideas tab (simpler, no external filters needed)
+      renderIdeasTab();
+      
+      // Initialize map
+      initializeMap();
+    }
+    
+    function renderIdeasTab() {
+      const panel = document.getElementById('list-panel');
+      const grouped = {};
+      
+      appState.data.ideas.forEach(item => {
+        const key = `${item.city} · ${item.suburb}`;
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(item);
+      });
+      
+      let html = '<div class="list-controls"><input type="search" class="search-input" placeholder="Search ideas..." data-tab="ideas" /></div>';
+      html += '<div class="list-grid" id="ideas-list">';
+      
+      Object.entries(grouped).forEach(([groupName, items], index) => {
+        html += `<details class="idea-group" ${index < 2 ? 'open' : ''}>`;
+        html += `<summary><span>${groupName}</span><span>${items.length} ideas</span></summary>`;
+        items.forEach(item => {
+          html += `
+            <article class="idea-card">
+              <div class="card-header">
+                <div class="card-title-section">
+                  <div class="card-title">${escapeHtml(item.title)}</div>
+                  <div class="card-subtitle">
+                    <span>${escapeHtml(item.city)}</span>
+                    <span>• ${escapeHtml(item.suburb)}</span>
+                  </div>
+                </div>
+                ${item.cost ? `<div class="card-price">${escapeHtml(item.cost)}</div>` : ''}
+              </div>
+              <div class="card-meta">
+                ${item.age ? `<span class="meta-item">👥 ${escapeHtml(item.age)}</span>` : ''}
+              </div>
+              <div class="card-description">${escapeHtml(item.description || '')}</div>
+              <div class="card-actions">
+                <button class="btn-primary" onclick="focusOnMap('${item.id}', 'Instagram Idea')">📍 View on Map</button>
+                <a href="${escapeHtml(item.link)}" target="_blank" class="btn-secondary">📸 Instagram</a>
+              </div>
+            </article>
+          `;
+        });
+        html += '</details>';
+      });
+      
+      html += '</div>';
+      panel.innerHTML = html;
+      
+      // Attach search
+      const searchInput = panel.querySelector('input[data-tab="ideas"]');
+      searchInput.addEventListener('input', debounce((e) => {
+        const query = e.target.value.toLowerCase();
+        const cards = panel.querySelectorAll('.idea-card');
+        const groups = panel.querySelectorAll('.idea-group');
+        
+        groups.forEach(group => {
+          const groupCards = group.querySelectorAll('.idea-card');
+          let visibleCount = 0;
+          groupCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            const match = text.includes(query);
+            card.style.display = match ? 'block' : 'none';
+            if (match) visibleCount++;
+          });
+          group.style.display = visibleCount > 0 ? 'block' : 'none';
+        });
+      }, 300));
+    }
+    
+    // ============================================
+    // EVENT DELEGATION
+    // ============================================
+    
+    document.addEventListener('click', (e) => {
+      console.log('Click detected on:', e.target);
+      
+      // Filter buttons
+      const filterButton = e.target.closest('.filter-button');
+      if (filterButton) {
+        console.log('Filter button clicked:', filterButton.dataset);
+        const container = filterButton.closest('.filter-buttons');
+        const tab = container.dataset.tab;
+        const type = container.dataset.type;
+        const value = filterButton.dataset.value;
+        
+        // Update active state
+        container.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+        filterButton.classList.add('active');
+        
+        // Update state
+        if (appState.filters[tab]) {
+          appState.filters[tab][type] = value;
+          
+          // Re-render the tab if it exists
+          if (window.tabInstances[tab]) {
+            // If city filter changed, need to rebuild category filters
+            if (type === 'city') {
+              window.tabInstances[tab].render();
+            } else {
+              // Just update display without rebuilding controls
+              window.tabInstances[tab].updateDisplay();
+            }
+          }
+        }
+        return;
+      }
+      
+      // Tab navigation (both desktop and mobile)
+      const tabButton = e.target.closest('.tab-button, .mobile-tab');
+      if (tabButton) {
+        console.log('Tab button clicked:', tabButton.dataset.target);
+        const target = tabButton.dataset.target;
+        
+        // Update active states
+        document.querySelectorAll('.tab-button, .mobile-tab').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll(`.tab-button[data-target="${target}"], .mobile-tab[data-target="${target}"]`).forEach(btn => btn.classList.add('active'));
+        
+        // Show panel
+        document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+        
+        // Update FAB visibility
+        const fab = document.getElementById('fabMap');
+        if (target === 'map-panel') {
+          fab.classList.add('hidden');
+        } else {
+          fab.classList.remove('hidden');
+        }
+        
+        appState.activeTab = target;
+        
+        // Refresh map size if switching to map
+        if (target === 'map-panel' && window.mapInstance) {
+          setTimeout(() => window.mapInstance.invalidateSize(), 100);
+        }
+        return;
+      }
+      
+      // Layer controls toggle
+      if (e.target.id === 'layerToggle' || e.target.closest('#layerToggle')) {
+        const panel = document.getElementById('layerPanel');
+        panel.classList.toggle('active');
+        return;
+      }
+    });
+    
+    // ============================================
+    // MAP INITIALIZATION
+    // ============================================
+    
+    function initializeMap() {
+      const map = L.map('map', {
+        center: [36.205, 138.252],
+        zoom: 6,
+        minZoom: 4,
+        maxBounds: [[20,120], [46,156]],
+        maxBoundsViscosity: 0.85,
+        zoomControl: true
+      });
+      
+      window.mapInstance = map;
+      
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: 'Map © <a href="https://carto.com/attributions">CARTO</a>',
+        maxZoom: 18,
+        minZoom: 4
+      }).addTo(map);
+      
+      // Create layer groups
+      const layers = {
+        accommodation: L.layerGroup().addTo(map),
+        ideas: L.layerGroup().addTo(map),
+        restaurants: L.layerGroup().addTo(map),
+        attractions: L.layerGroup().addTo(map),
+        animalCafes: L.layerGroup().addTo(map)
+      };
+      
+      // Marker creation
+      function createMarker(item) {
+        const typeMap = {
+          'Accommodation': 'hotel-marker',
+          'Event': 'event-marker',
+          'Instagram Idea': 'idea-marker',
+          'Restaurant': 'restaurant-marker',
+          'Attraction': 'attraction-marker',
+          'Animal Cafe': 'animal-marker'
+        };
+        
+        const symbolMap = {
+          'Accommodation': '🛌',
+          'Event': '★',
+          'Instagram Idea': '•',
+          'Restaurant': '🍣',
+          'Attraction': '☆',
+          'Animal Cafe': '🐾'
+        };
+        
+        const className = typeMap[item.type] || 'idea-marker';
+        const symbol = symbolMap[item.type] || '•';
+        
+        const icon = L.divIcon({
+          className: `custom-marker ${className}`,
+          html: `<span>${symbol}</span>`,
+          iconSize: [48, 48],
+          iconAnchor: [24, 48],
+          popupAnchor: [0, -32]
+        });
+        
+        const marker = L.marker([item.location.lat, item.location.lng], { icon });
+        
+        // Build popup
+        const popupFields = [];
+        if (item.dates) popupFields.push(`<div class="popup-field"><strong>When:</strong> ${escapeHtml(item.dates)}</div>`);
+        if (item.cost) popupFields.push(`<div class="popup-field"><strong>Cost:</strong> ${escapeHtml(item.cost)}</div>`);
+        if (item.wait) popupFields.push(`<div class="popup-field"><strong>Wait:</strong> ${escapeHtml(item.wait)}</div>`);
+        if (item.booking_requirement) popupFields.push(`<div class="popup-field"><strong>Booking:</strong> ${escapeHtml(item.booking_requirement)}</div>`);
+        if (item.animals?.length) popupFields.push(`<div class="popup-field"><strong>Animals:</strong> ${escapeHtml(item.animals.join(', '))}</div>`);
+        
+        const popupHtml = `
+          <div class="custom-popup">
+            <h4>${escapeHtml(item.title)}</h4>
+            <div class="popup-badges">
+              ${item.category ? `<span>${escapeHtml(item.category)}</span>` : ''}
+              ${item.city ? `<span>${escapeHtml(item.city)}</span>` : ''}
+            </div>
+            ${popupFields.join('')}
+            <p style="margin: 8px 0; font-size: 0.85rem;">${escapeHtml(item.description || item.details || item.detail || '')}</p>
+            ${item.primaryLink ? `<a href="${escapeHtml(item.primaryLink)}" target="_blank">View Details →</a>` : ''}
+          </div>
+        `;
+        
+        marker.bindPopup(popupHtml, {
+          closeButton: true,
+          offset: [0, -24],
+          autoPan: false
+        });
+        
+        item.marker = marker;
+        return marker;
+      }
+      
+      // Add markers to layers
+      [...appState.data.accommodations].forEach(item => {
+        createMarker(item).addTo(layers.accommodation);
+      });
+      
+      [...appState.data.ideas].forEach(item => {
+        createMarker(item).addTo(layers.ideas);
+      });
+      
+      [...appState.data.restaurants].forEach(item => {
+        createMarker(item).addTo(layers.restaurants);
+      });
+      
+      [...appState.data.attractions].forEach(item => {
+        createMarker(item).addTo(layers.attractions);
+      });
+      
+      [...appState.data.animalCafes].forEach(item => {
+        createMarker(item).addTo(layers.animalCafes);
+      });
+      
+      // Layer controls
+      document.getElementById('layer-accommodation').addEventListener('change', e => {
+        e.target.checked ? map.addLayer(layers.accommodation) : map.removeLayer(layers.accommodation);
+      });
+      document.getElementById('layer-ideas').addEventListener('change', e => {
+        e.target.checked ? map.addLayer(layers.ideas) : map.removeLayer(layers.ideas);
+      });
+      document.getElementById('layer-restaurants').addEventListener('change', e => {
+        e.target.checked ? map.addLayer(layers.restaurants) : map.removeLayer(layers.restaurants);
+      });
+      document.getElementById('layer-attractions').addEventListener('change', e => {
+        e.target.checked ? map.addLayer(layers.attractions) : map.removeLayer(layers.attractions);
+      });
+      document.getElementById('layer-animalcafes').addEventListener('change', e => {
+        e.target.checked ? map.addLayer(layers.animalCafes) : map.removeLayer(layers.animalCafes);
+      });
+      
+      window.mapLayers = layers;
+    }
+    
+    // Focus on map function
+    window.focusOnMap = function(id, type) {
+      // Find item
+      let item;
+      if (type === 'Restaurant') item = appState.data.restaurants.find(i => i.id === id);
+      else if (type === 'Attraction') item = appState.data.attractions.find(i => i.id === id);
+      else if (type === 'Animal Cafe') item = appState.data.animalCafes.find(i => i.id === id);
+      else if (type === 'Instagram Idea') item = appState.data.ideas.find(i => i.id === id);
+      else item = appState.data.accommodations.find(i => i.id === id);
+      
+      if (!item || !item.marker) return;
+      
+      // Switch to map tab
+      document.querySelectorAll('.tab-button, .mobile-tab').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-button[data-target="map-panel"], .mobile-tab[data-target="map-panel"]').forEach(btn => btn.classList.add('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('map-panel').classList.add('active');
+      
+      // Hide FAB
+      document.getElementById('fabMap').classList.add('hidden');
+      
+      // Ensure layer is visible
+      const layerMap = {
+        'Restaurant': 'restaurants',
+        'Attraction': 'attractions',
+        'Animal Cafe': 'animalCafes',
+        'Instagram Idea': 'ideas',
+        'Accommodation': 'accommodation',
+        'Event': 'accommodation'
+      };
+      const layerKey = layerMap[type];
+      if (layerKey && window.mapLayers && window.mapLayers[layerKey]) {
+        if (!window.mapInstance.hasLayer(window.mapLayers[layerKey])) {
+          window.mapInstance.addLayer(window.mapLayers[layerKey]);
+          const checkbox = document.getElementById(`layer-${layerKey}`);
+          if (checkbox) checkbox.checked = true;
+        }
+      }
+      
+      // Fly to location
+      window.mapInstance.flyTo([item.location.lat, item.location.lng], 14, { duration: 1.2 });
+      setTimeout(() => {
+        if (item.marker) item.marker.openPopup();
+      }, 1300);
+    };
+    
+    // FAB click
+    document.getElementById('fabMap').addEventListener('click', () => {
+      document.querySelectorAll('.tab-button, .mobile-tab').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-button[data-target="map-panel"], .mobile-tab[data-target="map-panel"]').forEach(btn => btn.classList.add('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('map-panel').classList.add('active');
+      document.getElementById('fabMap').classList.add('hidden');
+      
+      if (window.mapInstance) {
+        setTimeout(() => window.mapInstance.invalidateSize(), 100);
+      }
+    });
+    
+    // ============================================
+    // SAKURA PETALS
+    // ============================================
+    
+    function createPetals() {
+      const container = document.querySelector('.sakura-petals');
+      if (!container) return;
+      for (let i = 0; i < 8; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'sakra-petal';
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${10 + Math.random() * 8}s`;
+        petal.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(petal);
+      }
+    }
+    
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    
+    console.log('Starting initialization...');
+    createPetals();
+    loadData();
+  </script>
+</body>
+</html>
