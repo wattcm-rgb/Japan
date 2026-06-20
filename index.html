@@ -25,7 +25,7 @@
     header { padding: 28px 22px 18px; background: #fff6f8; color: #7d2f57; }
     header h1 { margin: 0; font-size: 3rem; line-height: 1.05; letter-spacing: -.04em; font-weight: 800; color: #7d2f57; }
     .main { max-width: 1380px; margin: 0 auto; padding: 22px; }
-    .tabs { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .tabs { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
     .tab-button { border: 1px solid #f1d5e0; background: #fff6f8; color: #7d2f57; padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: all .2s ease; font-weight: 600; text-align: center; }
     .tab-button.active { background: #d880a2; color: #fff; border-color: #d880a2; }
     .panel { display: none; gap: 18px; }
@@ -60,6 +60,8 @@
     .event-marker { background: #9f4f7b; }
     .idea-marker { background: #f0a7c8; }
     .restaurant-marker { background: #f57da3; }
+    .attraction-marker { background: #8eb9d4; }
+    .animal-marker { background: #95c46b; }
     .idea-group { border: 1px solid #f2d6e0; border-radius: 20px; padding: 12px 14px; background: #fff7fb; margin-bottom: 16px; box-shadow: 0 12px 34px rgba(158,83,110,.05); }
     .idea-group summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; gap: 12px; font-weight: 700; padding: 10px 0; color: #7d2f57; }
     .idea-group summary::-webkit-details-marker { display: none; }
@@ -82,6 +84,9 @@
     .list-controls input { width: 100%; max-width: 480px; min-width: 220px; border: 1px solid #f2d6e0; border-radius: 999px; padding: 12px 16px; background: #fff7fb; color:#3b2035; }
     .list-grid { display: grid; gap: 16px; }
     .idea-card { background: #fff7fb; border-radius: 24px; border: 1px solid #f2d6e0; padding: 18px; display: grid; gap: 12px; box-shadow: 0 10px 30px rgba(158,83,110,.06); }
+    .restaurant-fields { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+    .restaurant-field { background: #fff; border-radius: 12px; padding: 8px 12px; color:#6f4a63; font-weight:700; font-size:0.9rem; border:1px solid #f2d6e0; }
+    .restaurant-desc { margin: 10px 0 0; color: #3a4b6a; line-height: 1.7; min-height: 44px; }
     .idea-card h3 { margin: 0 0 6px; font-size: 1.05rem; color: #4a214d; }
     .idea-meta { display: flex; flex-wrap: wrap; gap: 10px; color: #6f4a63; font-size: .95rem; }
     .idea-meta span { background: #f7e3ec; border-radius: 999px; padding: 6px 12px; }
@@ -154,6 +159,8 @@
     .event-dot { background: #9f4f7b; }
     .idea-dot { background: #f0a7c8; }
     .restaurant-dot { background: #f57da3; }
+    .attraction-dot { background: #8eb9d4; }
+    .animal-dot { background: #95c46b; }
     .route-dot { background: #d95c97; }
     .leaflet-container { background: #eef4fb; }
     .custom-popup { font-family: Inter,system-ui,sans-serif; font-size: 0.94rem; line-height: 1.5; color: #3b2035; }
@@ -189,6 +196,9 @@
       <button class="tab-button active" data-target="map-panel" id="mapTab">Map view</button>
       <button class="tab-button" data-target="list-panel" id="listTab">Ideas list</button>
       <button class="tab-button" data-target="restaurants-panel" id="restaurantsTab">Restaurants</button>
+      <button class="tab-button" data-target="attractions-panel" id="attractionsTab">Attractions</button>
+      <button class="tab-button" data-target="animalcafes-panel" id="animalCafesTab">Animal Cafes</button>
+      <button class="tab-button" data-target="fulldata-panel" id="fullDataTab">Full data</button>
     </div>
 
     <div class="panel active" id="map-panel">
@@ -207,12 +217,16 @@
             <div class="legend-item"><span class="legend-dot route-dot"></span> Train route</div>
             <div class="legend-item"><span class="legend-dot idea-dot"></span> Instagram idea</div>
             <div class="legend-item"><span class="legend-dot restaurant-dot"></span> Restaurants</div>
+            <div class="legend-item"><span class="legend-dot attraction-dot"></span> Attractions</div>
+            <div class="legend-item"><span class="legend-dot animal-dot"></span> Animal cafes</div>
           </div>
           <div class="layer-controls">
             <label><input type="checkbox" checked id="layer-accommodation" /> Show airports / accommodation / events</label>
             <label><input type="checkbox" checked id="layer-trains" /> Show train routes</label>
             <label><input type="checkbox" checked id="layer-ideas" /> Show Instagram ideas</label>
             <label><input type="checkbox" checked id="layer-restaurants" /> Show restaurants</label>
+            <label><input type="checkbox" checked id="layer-attractions" /> Show attractions</label>
+            <label><input type="checkbox" checked id="layer-animalcafes" /> Show animal cafes</label>
           </div>
         </aside>
       </div>
@@ -235,14 +249,78 @@
     <div class="panel" id="restaurants-panel">
       <div class="list-controls">
         <div class="restaurant-filters-top">
-          <button class="category-toggle" type="button" aria-expanded="true">Categories</button>
-          <div class="filter-buttons open" id="restaurantCategoryFilters">
-            <button class="filter-button active" data-category="All" type="button">All categories</button>
+          <div id="restaurantCityWrap" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div id="restaurantCityFilters" class="filter-buttons">
+                <button class="filter-button active" data-city="All" type="button">All cities</button>
+              </div>
+              <button class="category-toggle" id="restaurantCategoryToggle" type="button" aria-expanded="true">Categories</button>
+            </div>
+            <div class="filter-buttons open" id="restaurantCategoryFilters">
+              <button class="filter-button active" data-category="All" type="button">All categories</button>
+            </div>
           </div>
         </div>
         <input type="search" id="restaurantSearch" placeholder="Search restaurants by name, cuisine, area…" />
       </div>
       <div class="list-grid" id="restaurantsList"></div>
+    </div>
+    <div class="panel" id="attractions-panel">
+      <div class="list-controls">
+        <div class="restaurant-filters-top">
+          <div id="attractionCityWrap" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div id="attractionCityFilters" class="filter-buttons">
+                <button class="filter-button active" data-city="All" type="button">All cities</button>
+              </div>
+              <button class="category-toggle" id="attractionCategoryToggle" type="button" aria-expanded="true">Categories</button>
+            </div>
+            <div class="filter-buttons open" id="attractionCategoryFilters">
+              <button class="filter-button active" data-category="All" type="button">All categories</button>
+            </div>
+          </div>
+        </div>
+        <input type="search" id="attractionSearch" placeholder="Search attractions by name, type, area…" />
+      </div>
+      <div class="list-grid" id="attractionsList"></div>
+    </div>
+    <div class="panel" id="animalcafes-panel">
+      <div class="list-controls">
+        <div class="restaurant-filters-top">
+          <div id="animalCafeCityWrap" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div id="animalCafeCityFilters" class="filter-buttons">
+                <button class="filter-button active" data-city="All" type="button">All cities</button>
+              </div>
+              <button class="category-toggle" id="animalCafeCategoryToggle" type="button" aria-expanded="true">Categories</button>
+            </div>
+            <div class="filter-buttons open" id="animalCafeCategoryFilters">
+              <button class="filter-button active" data-category="All" type="button">All categories</button>
+            </div>
+          </div>
+        </div>
+        <input type="search" id="animalCafeSearch" placeholder="Search animal cafes by name, animal, area…" />
+      </div>
+      <div class="list-grid" id="animalCafeList"></div>
+    </div>
+    <div class="panel" id="fulldata-panel">
+      <div class="list-controls">
+        <div class="restaurant-filters-top">
+          <div id="fullDataCityWrap" style="display:flex;flex-direction:column;gap:8px;width:100%;">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+              <div id="fullDataCityFilters" class="filter-buttons">
+                <button class="filter-button active" data-city="All" type="button">All cities</button>
+              </div>
+              <button class="category-toggle" id="fullDataCategoryToggle" type="button" aria-expanded="true">Categories</button>
+            </div>
+            <div class="filter-buttons open" id="fullDataCategoryFilters">
+              <button class="filter-button active" data-category="All" type="button">All categories</button>
+            </div>
+          </div>
+        </div>
+        <input type="search" id="fullDataSearch" placeholder="Search the full dataset by name, city, category…" />
+      </div>
+      <div class="list-grid" id="fullDataList"></div>
     </div>
   </main>
 
@@ -430,14 +508,20 @@
     const trainLayer = L.layerGroup().addTo(map);
     const ideasLayer = L.layerGroup().addTo(map);
     const restaurantsLayer = L.layerGroup().addTo(map);
+    const attractionsLayer = L.layerGroup().addTo(map);
+    const animalCafesLayer = L.layerGroup().addTo(map);
     const restaurantsData = [];
+    const attractionsData = [];
+    const animalCafesData = [];
 
     const iconStyles = {
       Airport: { class:'airport-marker', symbol:'✈' },
       Accommodation: { class:'hotel-marker', symbol:'🛌' },
       Event: { class:'event-marker', symbol:'★' },
       Idea: { class:'idea-marker', symbol:'•' },
-      Restaurant: { class:'restaurant-marker', symbol:'🍣' }
+      Restaurant: { class:'restaurant-marker', symbol:'🍣' },
+      Attraction: { class:'attraction-marker', symbol:'☆' },
+      'Animal Cafe': { class:'animal-marker', symbol:'🐾' }
     };
 
     function createIcon(type) {
@@ -469,6 +553,9 @@
       if (item.dates) lines.push(`<div><strong>When:</strong> ${secureHtml(item.dates)}</div>`);
       if (item.cost || item.cost_approx) lines.push(`<div><strong>Cost:</strong> ${secureHtml(item.cost || item.cost_approx)}</div>`);
       if (item.tabelog_rating) lines.push(`<div><strong>Rating:</strong> ${secureHtml(item.tabelog_rating)}</div>`);
+      // Approx wait time (accept multiple possible property names)
+      const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait;
+      if (wait) lines.push(`<div><strong>Approx wait:</strong> ${secureHtml(wait)}</div>`);
       if (item.table_for_9_likelihood) lines.push(`<div><strong>Group booking:</strong> ${secureHtml(item.table_for_9_likelihood)}</div>`);
       lines.push(`<div style="margin:10px 0;">${secureHtml(item.detail || item.details || item.description || 'No extra details.')}</div>`);
       if (item.link) lines.push(`<div><a href="${secureHtml(item.link)}" target="_blank" rel="noreferrer">Open link</a></div>`);
@@ -549,6 +636,26 @@
       });
     }
 
+    function addAttractionMarkers() {
+      attractionsData.forEach(item => {
+        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Attraction') });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        bindHoverPopup(marker);
+        marker.addTo(attractionsLayer);
+        item.marker = marker;
+      });
+    }
+
+    function addAnimalCafeMarkers() {
+      animalCafesData.forEach(item => {
+        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Animal Cafe') });
+        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24] });
+        bindHoverPopup(marker);
+        marker.addTo(animalCafesLayer);
+        item.marker = marker;
+      });
+    }
+
     // Keep references to train polylines so we can highlight by selected leg
     const trainLines = [];
     trainRoutes.forEach(route => {
@@ -574,8 +681,13 @@
       map.invalidateSize();
     }, 300);
 
-    map.on('click', () => {
-      [accommodationLayer, ideasLayer, restaurantsLayer].forEach(layer => {
+    map.on('click', (e) => {
+      // Only close popups when the user clicked outside any marker or popup
+      const originalTarget = e && e.originalEvent && e.originalEvent.target;
+      if (originalTarget && originalTarget.closest && (originalTarget.closest('.leaflet-popup') || originalTarget.closest('.custom-marker'))) {
+        return; // clicked on a popup or marker — keep popups open
+      }
+      [accommodationLayer, ideasLayer, restaurantsLayer, attractionsLayer, animalCafesLayer].forEach(layer => {
         layer.eachLayer(item => {
           if (item.closePopup) {
             item.closePopup();
@@ -601,17 +713,48 @@
       if (event.target.checked) map.addLayer(restaurantsLayer);
       else map.removeLayer(restaurantsLayer);
     });
+    document.getElementById('layer-attractions').addEventListener('change', event => {
+      if (event.target.checked) map.addLayer(attractionsLayer);
+      else map.removeLayer(attractionsLayer);
+    });
+    document.getElementById('layer-animalcafes').addEventListener('change', event => {
+      if (event.target.checked) map.addLayer(animalCafesLayer);
+      else map.removeLayer(animalCafesLayer);
+    });
 
     const ideaSearch = document.getElementById('ideaSearch');
     const ideasList = document.getElementById('ideasList');
     const restaurantSearch = document.getElementById('restaurantSearch');
     const restaurantsList = document.getElementById('restaurantsList');
     const restaurantCategoryFilters = document.getElementById('restaurantCategoryFilters');
-    const restaurantCategoryToggle = document.querySelector('.category-toggle');
+    const restaurantCategoryToggle = document.getElementById('restaurantCategoryToggle');
+    const restaurantCityFilters = document.getElementById('restaurantCityFilters');
+    const attractionSearch = document.getElementById('attractionSearch');
+    const attractionsList = document.getElementById('attractionsList');
+    const attractionCategoryFilters = document.getElementById('attractionCategoryFilters');
+    const attractionCategoryToggle = document.getElementById('attractionCategoryToggle');
+    const attractionCityFilters = document.getElementById('attractionCityFilters');
+    const animalCafeSearch = document.getElementById('animalCafeSearch');
+    const animalCafeList = document.getElementById('animalCafeList');
+    const animalCafeCategoryFilters = document.getElementById('animalCafeCategoryFilters');
+    const animalCafeCategoryToggle = document.getElementById('animalCafeCategoryToggle');
+    const animalCafeCityFilters = document.getElementById('animalCafeCityFilters');
+    const fullDataSearch = document.getElementById('fullDataSearch');
+    const fullDataList = document.getElementById('fullDataList');
+    const fullDataCategoryFilters = document.getElementById('fullDataCategoryFilters');
+    const fullDataCategoryToggle = document.getElementById('fullDataCategoryToggle');
+    const fullDataCityFilters = document.getElementById('fullDataCityFilters');
     let selectedRestaurantCategory = 'All';
+    let selectedRestaurantCity = 'All';
+    let selectedAttractionCategory = 'All';
+    let selectedAttractionCity = 'All';
+    let selectedAnimalCafeCategory = 'All';
+    let selectedAnimalCafeCity = 'All';
+    let selectedFullDataCategory = 'All';
+    let selectedFullDataCity = 'All';
 
     function loadRestaurants() {
-      fetch('restaurants.json')
+      return fetch('restaurants.json')
         .then(response => response.ok ? response.json() : Promise.reject(response))
         .then(data => {
           const destinations = data.destinations || {};
@@ -628,6 +771,7 @@
             });
           });
           addRestaurantMarkers();
+          buildRestaurantCityFilters();
           buildRestaurantCategoryFilters();
           renderRestaurants();
           if (restaurantCategoryToggle) {
@@ -640,6 +784,7 @@
         .catch(error => {
           console.warn('Unable to load restaurant data:', error);
           restaurantsList.innerHTML = '<p style="color:#70426b;">Restaurant data is unavailable. Please make sure <strong>restaurants.json</strong> is served from the same folder.</p>';
+          return null;
         });
     }
 
@@ -726,10 +871,6 @@
       if (restaurant.marker) restaurant.marker.openPopup();
     }
 
-    renderIdeas();
-    loadRestaurants();
-
-    const legButtons = document.querySelectorAll('#legFilters .filter-button');
     function updateSearchAndFilter() {
       const query = ideaSearch.value.trim().toLowerCase();
       document.querySelectorAll('.idea-group').forEach(group => {
@@ -761,7 +902,9 @@
     }
 
     function buildRestaurantCategoryFilters() {
-      const categories = Array.from(new Set(restaurantsData.map(item => item.category || 'Other'))).sort((a, b) => a.localeCompare(b));
+      const categories = Array.from(new Set(restaurantsData
+        .filter(i => selectedRestaurantCity === 'All' || i.city === selectedRestaurantCity)
+        .map(item => item.category || 'Other'))).sort((a, b) => a.localeCompare(b));
       restaurantCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
       categories.forEach(category => {
         const button = document.createElement('button');
@@ -782,40 +925,101 @@
       });
     }
 
+    function buildRestaurantCityFilters() {
+      const cities = Array.from(new Set(restaurantsData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      restaurantCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
+      cities.forEach(city => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.city = city;
+        button.textContent = city;
+        restaurantCityFilters.appendChild(button);
+      });
+      restaurantCityFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          restaurantCityFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedRestaurantCity = button.dataset.city;
+          // rebuild categories for this city
+          buildRestaurantCategoryFilters();
+          renderRestaurants();
+          updateRestaurantSearch();
+        });
+      });
+    }
+
     function renderRestaurants() {
       restaurantsList.innerHTML = '';
-      const filteredRestaurants = restaurantsData.filter(item => selectedRestaurantCategory === 'All' || item.category === selectedRestaurantCategory);
-      const groupedRestaurants = groupRestaurantsByArea(filteredRestaurants);
-      groupedRestaurants.forEach(group => {
-        const details = document.createElement('details');
-        details.className = 'idea-group';
-        details.open = true;
-        const summary = document.createElement('summary');
-        summary.innerHTML = `<span>${group.city} · ${group.suburb}</span><span>${group.items.length} restaurants</span>`;
-        details.appendChild(summary);
+      const filteredRestaurants = restaurantsData
+        .filter(item => (selectedRestaurantCategory === 'All' || item.category === selectedRestaurantCategory) &&
+                        (selectedRestaurantCity === 'All' || item.city === selectedRestaurantCity));
 
-        group.items.forEach(item => {
-          const card = document.createElement('article');
-          card.className = 'idea-card';
-          card.id = `restaurant-${item.id}`;
-          card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description].join(' ').toLowerCase();
-          card.dataset.category = item.category.toLowerCase();
-          card.innerHTML = `
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <div>
-                <h3>${item.name}</h3>
-                <div class="idea-meta"><span>${item.category}</span><span>${item.cuisine_type}</span><span>${item.city}</span><span>${item.suburb}</span></div>
+      // Group by city, then by suburb
+      const cityGroups = {};
+      filteredRestaurants.forEach(item => {
+        const city = item.city || 'Unknown';
+        const suburb = item.suburb || '';
+        cityGroups[city] = cityGroups[city] || {};
+        cityGroups[city][suburb] = cityGroups[city][suburb] || [];
+        cityGroups[city][suburb].push(item);
+      });
+
+      Object.keys(cityGroups).sort().forEach(city => {
+        const cityDetails = document.createElement('details');
+        cityDetails.className = 'idea-group';
+        cityDetails.open = false; // start collapsed
+        const citySummary = document.createElement('summary');
+        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
+        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} restaurants</span>`;
+        cityDetails.appendChild(citySummary);
+
+        // For each suburb under the city
+        Object.keys(cityGroups[city]).sort().forEach(suburb => {
+          const items = cityGroups[city][suburb];
+          const suburbDetails = document.createElement('details');
+          suburbDetails.className = 'idea-group';
+          suburbDetails.open = false; // collapsed by default
+          const suburbSummary = document.createElement('summary');
+          const label = suburb || 'Various areas';
+          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} restaurants</span>`;
+          suburbDetails.appendChild(suburbSummary);
+
+          items.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'idea-card';
+            card.id = `restaurant-${item.id}`;
+            const _waitSearch = (item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '').toString();
+            card.dataset.search = [item.name, item.city, item.suburb, item.cuisine_type, item.category, item.description, _waitSearch].join(' ').toLowerCase();
+            card.dataset.category = (item.category || '').toLowerCase();
+            const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '';
+            card.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <h3>${item.name}</h3>
+                  <div class="idea-meta"><span>${item.category}</span><span>${item.cuisine_type}</span><span>${item.city}</span><span>${item.suburb}</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                  <a href="${item.google_maps_link || '#'}" target="_blank" rel="noreferrer">Map</a>
+                  ${item.tabelog_link ? `<a href="${item.tabelog_link}" target="_blank" rel="noreferrer">Tabelog</a>` : ''}
+                </div>
               </div>
-              <a href="${item.google_maps_link}" target="_blank" rel="noreferrer">Map</a>
-            </div>
-            <p>${item.description}</p>
-            <p style="margin:0;color:#526085;"><strong>Cost:</strong> ${item.cost_approx} · <strong>Rating:</strong> ${item.tabelog_rating}</p>
-            <div class="idea-actions"><button type="button" onclick="focusOnRestaurant('${item.id}')">See on Map</button><span class="detail-badge">${item.table_for_9_likelihood}</span></div>
-          `;
-          details.appendChild(card);
+              <div class="restaurant-fields">
+                <div class="restaurant-field">Cost: ${item.cost_approx || ''}</div>
+                <div class="restaurant-field">Rating: ${item.tabelog_rating || ''}</div>
+                <div class="restaurant-field">Approx wait: ${wait}</div>
+                <div class="restaurant-field">Group booking: ${item.table_for_9_likelihood || ''}</div>
+              </div>
+              <p class="restaurant-desc">${item.description || ''}</p>
+              <div class="idea-actions"><button type="button" onclick="focusOnRestaurant('${item.id}')">See on Map</button></div>
+            `;
+            suburbDetails.appendChild(card);
+          });
+
+          cityDetails.appendChild(suburbDetails);
         });
 
-        restaurantsList.appendChild(details);
+        restaurantsList.appendChild(cityDetails);
       });
     }
 
@@ -834,6 +1038,610 @@
       });
     }
 
+    function loadAttractions() {
+      return fetch('attractions_by_location.json')
+        .then(response => response.ok ? response.json() : Promise.reject(response))
+        .then(data => {
+          const locations = data.locations || {};
+          Object.entries(locations).forEach(([city, groups]) => {
+            Object.entries(groups).forEach(([groupName, items]) => {
+              items.forEach((item, index) => {
+                item.city = city;
+                item.suburb = item.suburb || '';
+                item.type = 'Attraction';
+                item.category = groupName === 'top_10' ? 'Top 10' : groupName === 'hidden_gems' ? 'Hidden gems' : groupName;
+                item.title = item.name;
+                item.detail = item.description || item.detail;
+                item.link = item.website || item.google_map_link;
+                item.id = item.id || `${city.toLowerCase().replace(/\s+/g, '-')}-${item.name.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+                attractionsData.push(item);
+              });
+            });
+          });
+          addAttractionMarkers();
+          buildAttractionCityFilters();
+          buildAttractionCategoryFilters();
+          renderAttractions();
+          if (attractionCategoryToggle) {
+            attractionCategoryToggle.addEventListener('click', () => {
+              const expanded = attractionCategoryFilters.classList.toggle('open');
+              attractionCategoryToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            });
+          }
+        })
+        .catch(error => {
+          console.warn('Unable to load attractions:', error);
+          attractionsList.innerHTML = '<p style="color:#70426b;">Attraction data is unavailable. Please make sure <strong>attractions_by_location.json</strong> is served from the same folder.</p>';
+          return null;
+        });
+    }
+
+    function loadAnimalCafes() {
+      return fetch('animal_cafes.json')
+        .then(response => response.ok ? response.json() : Promise.reject(response))
+        .then(data => {
+          const cities = data.cities || {};
+          Object.entries(cities).forEach(([city, items]) => {
+            items.forEach((item, index) => {
+              item.city = city;
+              item.suburb = item.suburb || '';
+              item.type = 'Animal Cafe';
+              item.category = item.animals && item.animals.length ? item.animals[0] : 'Animal Cafe';
+              item.title = item.name;
+              item.detail = item.description || item.detail;
+              item.link = item.website || item.google_map_link;
+              item.id = item.id || `${city.toLowerCase().replace(/\s+/g, '-')}-${item.name.toLowerCase().replace(/\s+/g, '-')}-${index}`;
+              animalCafesData.push(item);
+            });
+          });
+          addAnimalCafeMarkers();
+          buildAnimalCafeCityFilters();
+          buildAnimalCafeCategoryFilters();
+          renderAnimalCafes();
+          if (animalCafeCategoryToggle) {
+            animalCafeCategoryToggle.addEventListener('click', () => {
+              const expanded = animalCafeCategoryFilters.classList.toggle('open');
+              animalCafeCategoryToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            });
+          }
+        })
+        .catch(error => {
+          console.warn('Unable to load animal cafes:', error);
+          animalCafeList.innerHTML = '<p style="color:#70426b;">Animal cafe data is unavailable. Please make sure <strong>animal_cafes.json</strong> is served from the same folder.</p>';
+          return null;
+        });
+    }
+
+    function buildAttractionCategoryFilters() {
+      const categories = Array.from(new Set(attractionsData
+        .filter(i => selectedAttractionCity === 'All' || i.city === selectedAttractionCity)
+        .map(item => item.category || 'Other'))).sort((a, b) => a.localeCompare(b));
+      attractionCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.category = category;
+        button.textContent = category;
+        attractionCategoryFilters.appendChild(button);
+      });
+      attractionCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          attractionCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedAttractionCategory = button.dataset.category;
+          renderAttractions();
+          updateAttractionSearch();
+        });
+      });
+    }
+
+    function buildAttractionCityFilters() {
+      const cities = Array.from(new Set(attractionsData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      attractionCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
+      cities.forEach(city => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.city = city;
+        button.textContent = city;
+        attractionCityFilters.appendChild(button);
+      });
+      attractionCityFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          attractionCityFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedAttractionCity = button.dataset.city;
+          buildAttractionCategoryFilters();
+          renderAttractions();
+          updateAttractionSearch();
+        });
+      });
+    }
+
+    function renderAttractions() {
+      attractionsList.innerHTML = '';
+      const filteredAttractions = attractionsData
+        .filter(item => (selectedAttractionCategory === 'All' || item.category === selectedAttractionCategory) &&
+                        (selectedAttractionCity === 'All' || item.city === selectedAttractionCity));
+
+      const cityGroups = {};
+      filteredAttractions.forEach(item => {
+        const city = item.city || 'Unknown';
+        const suburb = item.suburb || '';
+        cityGroups[city] = cityGroups[city] || {};
+        cityGroups[city][suburb] = cityGroups[city][suburb] || [];
+        cityGroups[city][suburb].push(item);
+      });
+
+      Object.keys(cityGroups).sort().forEach(city => {
+        const cityDetails = document.createElement('details');
+        cityDetails.className = 'idea-group';
+        cityDetails.open = false;
+        const citySummary = document.createElement('summary');
+        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
+        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} attractions</span>`;
+        cityDetails.appendChild(citySummary);
+
+        Object.keys(cityGroups[city]).sort().forEach(suburb => {
+          const items = cityGroups[city][suburb];
+          const suburbDetails = document.createElement('details');
+          suburbDetails.className = 'idea-group';
+          suburbDetails.open = false;
+          const suburbSummary = document.createElement('summary');
+          const label = suburb || 'Various areas';
+          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} attractions</span>`;
+          suburbDetails.appendChild(suburbSummary);
+
+          items.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'idea-card';
+            card.id = `attraction-${item.id}`;
+            card.dataset.search = [item.name, item.city, item.suburb, item.category, item.description, item.booking_requirement].join(' ').toLowerCase();
+            card.dataset.category = (item.category || '').toLowerCase();
+            card.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <h3>${item.name}</h3>
+                  <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.suburb}</span><span>${item.approx_cost || ''}</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
+                </div>
+              </div>
+              <p class="restaurant-desc">${item.description || item.detail || ''}</p>
+              <div class="restaurant-fields">
+                <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
+                <div class="restaurant-field">Cost: ${item.approx_cost || ''}</div>
+              </div>
+              <div class="idea-actions"><button type="button" onclick="focusOnAttraction('${item.id}')">See on Map</button></div>
+            `;
+            suburbDetails.appendChild(card);
+          });
+
+          cityDetails.appendChild(suburbDetails);
+        });
+
+        attractionsList.appendChild(cityDetails);
+      });
+    }
+
+    function updateAttractionSearch() {
+      const query = attractionSearch.value.trim().toLowerCase();
+      document.querySelectorAll('#attractionsList .idea-group').forEach(group => {
+        const cards = group.querySelectorAll('.idea-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matches = card.dataset.search.includes(query);
+          card.style.display = matches ? 'grid' : 'none';
+          if (matches) visibleCount += 1;
+        });
+        group.style.display = visibleCount ? 'block' : 'none';
+        group.open = visibleCount > 0 && query !== '';
+      });
+    }
+
+    function focusOnAttraction(id) {
+      const item = attractionsData.find(i => i.id === id);
+      if (!item) return;
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('mapTab').classList.add('active');
+      document.getElementById('map-panel').classList.add('active');
+      if (!map.hasLayer(attractionsLayer)) {
+        map.addLayer(attractionsLayer);
+        document.getElementById('layer-attractions').checked = true;
+      }
+      map.flyTo([item.coordinates.lat, item.coordinates.lng], 12, { duration: 1.2 });
+      if (item.marker) item.marker.openPopup();
+    }
+
+    function buildAnimalCafeCategoryFilters() {
+      const categories = Array.from(new Set(animalCafesData
+        .filter(i => selectedAnimalCafeCity === 'All' || i.city === selectedAnimalCafeCity)
+        .map(item => item.category || 'Other'))).sort((a, b) => a.localeCompare(b));
+      animalCafeCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.category = category;
+        button.textContent = category;
+        animalCafeCategoryFilters.appendChild(button);
+      });
+      animalCafeCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          animalCafeCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedAnimalCafeCategory = button.dataset.category;
+          renderAnimalCafes();
+          updateAnimalCafeSearch();
+        });
+      });
+    }
+
+    function buildAnimalCafeCityFilters() {
+      const cities = Array.from(new Set(animalCafesData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      animalCafeCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
+      cities.forEach(city => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.city = city;
+        button.textContent = city;
+        animalCafeCityFilters.appendChild(button);
+      });
+      animalCafeCityFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          animalCafeCityFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedAnimalCafeCity = button.dataset.city;
+          buildAnimalCafeCategoryFilters();
+          renderAnimalCafes();
+          updateAnimalCafeSearch();
+        });
+      });
+    }
+
+    function renderAnimalCafes() {
+      animalCafeList.innerHTML = '';
+      const filteredCafes = animalCafesData
+        .filter(item => (selectedAnimalCafeCategory === 'All' || item.category === selectedAnimalCafeCategory) &&
+                        (selectedAnimalCafeCity === 'All' || item.city === selectedAnimalCafeCity));
+      const cityGroups = {};
+      filteredCafes.forEach(item => {
+        const city = item.city || 'Unknown';
+        const suburb = item.suburb || '';
+        cityGroups[city] = cityGroups[city] || {};
+        cityGroups[city][suburb] = cityGroups[city][suburb] || [];
+        cityGroups[city][suburb].push(item);
+      });
+      Object.keys(cityGroups).sort().forEach(city => {
+        const cityDetails = document.createElement('details');
+        cityDetails.className = 'idea-group';
+        cityDetails.open = false;
+        const citySummary = document.createElement('summary');
+        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
+        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} cafes</span>`;
+        cityDetails.appendChild(citySummary);
+        Object.keys(cityGroups[city]).sort().forEach(suburb => {
+          const items = cityGroups[city][suburb];
+          const suburbDetails = document.createElement('details');
+          suburbDetails.className = 'idea-group';
+          suburbDetails.open = false;
+          const suburbSummary = document.createElement('summary');
+          const label = suburb || 'Various areas';
+          suburbSummary.innerHTML = `<span>${label}</span><span>${items.length} cafes</span>`;
+          suburbDetails.appendChild(suburbSummary);
+          items.forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'idea-card';
+            card.id = `animalcafe-${item.id}`;
+            card.dataset.search = [item.name, item.city, item.suburb, item.category, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
+            card.dataset.category = (item.category || '').toLowerCase();
+            card.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <h3>${item.name}</h3>
+                  <div class="idea-meta"><span>${item.category}</span><span>${item.city}</span><span>${item.suburb}</span><span>${item.approx_cost || ''}</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Website</a>
+                </div>
+              </div>
+              <p class="restaurant-desc">${item.description || item.detail || ''}</p>
+              <div class="restaurant-fields">
+                <div class="restaurant-field">Animals: ${(item.animals || []).join(', ')}</div>
+                <div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>
+              </div>
+              <div class="idea-actions"><button type="button" onclick="focusOnAnimalCafe('${item.id}')">See on Map</button></div>
+            `;
+            suburbDetails.appendChild(card);
+          });
+          cityDetails.appendChild(suburbDetails);
+        });
+        animalCafeList.appendChild(cityDetails);
+      });
+    }
+
+    function updateAnimalCafeSearch() {
+      const query = animalCafeSearch.value.trim().toLowerCase();
+      document.querySelectorAll('#animalCafeList .idea-group').forEach(group => {
+        const cards = group.querySelectorAll('.idea-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matches = card.dataset.search.includes(query);
+          card.style.display = matches ? 'grid' : 'none';
+          if (matches) visibleCount += 1;
+        });
+        group.style.display = visibleCount ? 'block' : 'none';
+        group.open = visibleCount > 0 && query !== '';
+      });
+    }
+
+    function focusOnAnimalCafe(id) {
+      const item = animalCafesData.find(i => i.id === id);
+      if (!item) return;
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('mapTab').classList.add('active');
+      document.getElementById('map-panel').classList.add('active');
+      if (!map.hasLayer(animalCafesLayer)) {
+        map.addLayer(animalCafesLayer);
+        document.getElementById('layer-animalcafes').checked = true;
+      }
+      map.flyTo([item.coordinates.lat, item.coordinates.lng], 12, { duration: 1.2 });
+      if (item.marker) item.marker.openPopup();
+    }
+
+    function buildFullDataFilters() {
+      const cities = Array.from(new Set(fullData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      fullDataCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
+      cities.forEach(city => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.city = city;
+        button.textContent = city;
+        fullDataCityFilters.appendChild(button);
+      });
+      fullDataCityFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          fullDataCityFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedFullDataCity = button.dataset.city;
+          buildFullDataCategoryFilters();
+          renderFullData();
+          updateFullDataSearch();
+        });
+      });
+
+      const categories = Array.from(new Set(fullData
+        .filter(i => selectedFullDataCity === 'All' || i.city === selectedFullDataCity)
+        .map(item => item.category || item.type || 'Other'))).sort((a, b) => a.localeCompare(b));
+      fullDataCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.category = category;
+        button.textContent = category;
+        fullDataCategoryFilters.appendChild(button);
+      });
+      fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedFullDataCategory = button.dataset.category;
+          renderFullData();
+          updateFullDataSearch();
+        });
+      });
+    }
+
+    function buildFullDataCategoryFilters() {
+      const categories = Array.from(new Set(fullData
+        .filter(i => selectedFullDataCity === 'All' || i.city === selectedFullDataCity)
+        .map(item => item.category || item.type || 'Other'))).sort((a, b) => a.localeCompare(b));
+      fullDataCategoryFilters.innerHTML = '<button class="filter-button active" data-category="All" type="button">All categories</button>';
+      categories.forEach(category => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-button';
+        button.dataset.category = category;
+        button.textContent = category;
+        fullDataCategoryFilters.appendChild(button);
+      });
+      fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          fullDataCategoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          selectedFullDataCategory = button.dataset.category;
+          renderFullData();
+          updateFullDataSearch();
+        });
+      });
+    }
+
+    function buildFullData() {
+      fullData = [];
+      fullData = fullData.concat(
+        accommodations
+          .filter(item => ['Accommodation', 'Event'].includes(item.category))
+          .map(item => ({ ...item, type: item.category, category: item.category, title: item.title, detail: item.details || item.detail, link: item.link }))
+      );
+      fullData = fullData.concat(instagramIdeas.map(item => ({
+        ...item,
+        type: 'Instagram Idea',
+        category: 'Instagram Idea',
+        title: item.title,
+        detail: item.description,
+        link: item.link
+      })));
+      fullData = fullData.concat(restaurantsData.map(item => ({
+        ...item,
+        type: 'Restaurant',
+        category: item.category || 'Restaurant',
+        title: item.title || item.name,
+        detail: item.description || item.detail,
+        link: item.google_maps_link || item.link
+      })));
+      fullData = fullData.concat(attractionsData.map(item => ({
+        ...item,
+        type: 'Attraction',
+        category: item.category || 'Attraction',
+        title: item.title || item.name,
+        detail: item.description || item.detail,
+        link: item.link || item.website
+      })));
+      fullData = fullData.concat(animalCafesData.map(item => ({
+        ...item,
+        type: 'Animal Cafe',
+        category: item.category || 'Animal Cafe',
+        title: item.title || item.name,
+        detail: item.description || item.detail,
+        link: item.link || item.website
+      })));
+      buildFullDataFilters();
+    }
+
+    function renderFullData() {
+      fullDataList.innerHTML = '';
+      const filteredItems = fullData
+        .filter(item => (selectedFullDataCategory === 'All' || (item.category || item.type) === selectedFullDataCategory) &&
+                        (selectedFullDataCity === 'All' || item.city === selectedFullDataCity));
+      const cityGroups = {};
+      filteredItems.forEach(item => {
+        const city = item.city || 'Unknown';
+        const category = item.category || item.type || 'Other';
+        cityGroups[city] = cityGroups[city] || {};
+        cityGroups[city][category] = cityGroups[city][category] || [];
+        cityGroups[city][category].push(item);
+      });
+      Object.keys(cityGroups).sort().forEach(city => {
+        const cityDetails = document.createElement('details');
+        cityDetails.className = 'idea-group';
+        cityDetails.open = false;
+        const citySummary = document.createElement('summary');
+        const cityCount = Object.values(cityGroups[city]).reduce((s, arr) => s + arr.length, 0);
+        citySummary.innerHTML = `<span>${city}</span><span>${cityCount} items</span>`;
+        cityDetails.appendChild(citySummary);
+        Object.keys(cityGroups[city]).sort().forEach(category => {
+          const categoryDetails = document.createElement('details');
+          categoryDetails.className = 'idea-group';
+          categoryDetails.open = false;
+          const categorySummary = document.createElement('summary');
+          categorySummary.innerHTML = `<span>${category}</span><span>${cityGroups[city][category].length}</span>`;
+          categoryDetails.appendChild(categorySummary);
+          cityGroups[city][category].forEach(item => {
+            const card = document.createElement('article');
+            card.className = 'idea-card';
+            card.id = `full-${item.type.toLowerCase().replace(/\s+/g, '-')}-${item.id}`;
+            card.dataset.search = [item.title, item.city, item.suburb, item.category, item.type, item.detail, item.description, (item.animals || []).join(' ')].join(' ').toLowerCase();
+            card.dataset.category = (item.category || item.type || '').toLowerCase();
+            const extraFields = [];
+            if (item.type === 'Restaurant') {
+              const wait = item.approx_wait_time || item.approx_wait || item['Approx Wait time'] || item.wait || '';
+              extraFields.push(`<div class="restaurant-field">Approx wait: ${wait}</div>`);
+              extraFields.push(`<div class="restaurant-field">Cost: ${item.cost_approx || item.cost || ''}</div>`);
+            }
+            if (item.type === 'Attraction') {
+              extraFields.push(`<div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>`);
+              extraFields.push(`<div class="restaurant-field">Cost: ${item.approx_cost || ''}</div>`);
+            }
+            if (item.type === 'Animal Cafe') {
+              extraFields.push(`<div class="restaurant-field">Animals: ${(item.animals || []).join(', ')}</div>`);
+              extraFields.push(`<div class="restaurant-field">Booking: ${item.booking_requirement || 'Walk-in'}</div>`);
+            }
+            if (item.type === 'Instagram Idea') {
+              extraFields.push(`<div class="restaurant-field">Cost: ${item.cost || ''}</div>`);
+            }
+            if (item.type === 'Accommodation' || item.type === 'Event') {
+              extraFields.push(`<div class="restaurant-field">Dates: ${item.dates || ''}</div>`);
+            }
+            card.innerHTML = `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+                <div>
+                  <h3>${item.title}</h3>
+                  <div class="idea-meta"><span>${item.type}</span><span>${item.category || ''}</span><span>${item.city}</span><span>${item.suburb || ''}</span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+                  <a href="${item.link || '#'}" target="_blank" rel="noreferrer">Details</a>
+                </div>
+              </div>
+              <p class="restaurant-desc">${item.detail || item.description || ''}</p>
+              <div class="restaurant-fields">${extraFields.join('')}</div>
+              <div class="idea-actions"><button type="button" onclick="focusOnFullData('${item.id}')">See on Map</button></div>
+            `;
+            categoryDetails.appendChild(card);
+          });
+          cityDetails.appendChild(categoryDetails);
+        });
+        fullDataList.appendChild(cityDetails);
+      });
+    }
+
+    function updateFullDataSearch() {
+      const query = fullDataSearch.value.trim().toLowerCase();
+      document.querySelectorAll('#fullDataList .idea-group').forEach(group => {
+        const cards = group.querySelectorAll('.idea-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const matches = card.dataset.search.includes(query);
+          card.style.display = matches ? 'grid' : 'none';
+          if (matches) visibleCount += 1;
+        });
+        group.style.display = visibleCount ? 'block' : 'none';
+        group.open = visibleCount > 0 && query !== '';
+      });
+    }
+
+    function focusOnFullData(id) {
+      const item = fullData.find(i => i.id === id);
+      if (!item) return;
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
+      document.getElementById('mapTab').classList.add('active');
+      document.getElementById('map-panel').classList.add('active');
+      const layerMap = {
+        'Restaurant': restaurantsLayer,
+        'Attraction': attractionsLayer,
+        'Animal Cafe': animalCafesLayer,
+        'Instagram Idea': ideasLayer,
+        'Accommodation': accommodationLayer,
+        'Event': accommodationLayer
+      };
+      const checkboxMap = {
+        'Restaurant': 'layer-restaurants',
+        'Attraction': 'layer-attractions',
+        'Animal Cafe': 'layer-animalcafes',
+        'Instagram Idea': 'layer-ideas',
+        'Accommodation': 'layer-accommodation',
+        'Event': 'layer-accommodation'
+      };
+      const itemLayer = layerMap[item.type];
+      if (itemLayer && !map.hasLayer(itemLayer)) {
+        map.addLayer(itemLayer);
+        const checkbox = document.getElementById(checkboxMap[item.type]);
+        if (checkbox) checkbox.checked = true;
+      }
+      map.flyTo([item.lat || item.coordinates?.lat || item.latitude, item.lng || item.coordinates?.lng || item.longitude], 12, { duration: 1.2 });
+      if (item.marker) item.marker.openPopup();
+    }
+
+    renderIdeas();
+    Promise.allSettled([loadRestaurants(), loadAttractions(), loadAnimalCafes()]).then(() => {
+      buildFullData();
+      renderFullData();
+      if (fullDataCategoryToggle) {
+        fullDataCategoryToggle.addEventListener('click', () => {
+          const expanded = fullDataCategoryFilters.classList.toggle('open');
+          fullDataCategoryToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
+      }
+    });
+
+    const legButtons = document.querySelectorAll('#legFilters .filter-button');
     legButtons.forEach(button => {
       button.addEventListener('click', () => {
         legButtons.forEach(btn => btn.classList.remove('active'));
@@ -853,6 +1661,9 @@
 
     ideaSearch.addEventListener('input', updateSearchAndFilter);
     restaurantSearch.addEventListener('input', updateRestaurantSearch);
+    attractionSearch.addEventListener('input', updateAttractionSearch);
+    animalCafeSearch.addEventListener('input', updateAnimalCafeSearch);
+    fullDataSearch.addEventListener('input', updateFullDataSearch);
 
     const mapNotice = document.querySelector('.map-notice');
     const noticeToggle = document.querySelector('.notice-toggle');
