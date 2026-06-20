@@ -173,7 +173,7 @@
     
     /* Mobile Bottom Navigation */
     @media (max-width: 767px) {
-      header h1 { font-size: 1.4rem; padding: 4px 0; }
+      header h1 { font-size: clamp(2rem, 8.5vw, 2.6rem); line-height: 1; white-space: nowrap; padding: 2px 0; }
       .tabs { display: none !important; }
       .panel { padding-bottom: 0; }
       #map-panel { min-height: calc(100vh - 70px); }
@@ -261,7 +261,7 @@
 <body>
   <div class="sakura-tree"></div>
   <header>
-    <h1>Japan Holiday Dashboard</h1>
+    <h1>Japan Holiday</h1>
   </header>
   <main class="main">
     <div class="sakura-petals"></div>
@@ -285,11 +285,11 @@
           <small>Hover pins and routes to see details. Use the checkboxes to toggle the categories. Click a list item “See on Map” to jump to the idea.</small>
 
           <div class="layer-controls">
-            <label><input type="checkbox" checked id="layer-accommodation" /> Show accommodation / events</label>
+            <label><input type="checkbox" checked id="layer-accommodation" /> Show Accomodation / Events</label>
             <label><input type="checkbox" checked id="layer-ideas" /> Show Instagram ideas</label>
-            <label><input type="checkbox" checked id="layer-restaurants" /> Show restaurants</label>
-            <label><input type="checkbox" checked id="layer-attractions" /> Show attractions</label>
-            <label><input type="checkbox" checked id="layer-animalcafes" /> Show animal cafes</label>
+            <label><input type="checkbox" checked id="layer-restaurants" /> Show Restaurants</label>
+            <label><input type="checkbox" checked id="layer-attractions" /> Show Attractions</label>
+            <label><input type="checkbox" checked id="layer-animalcafes" /> Show Animal Cafes</label>
           </div>
         </aside>
       </div>
@@ -808,6 +808,18 @@
     let selectedFullDataCategory = 'All';
     let selectedFullDataCity = 'All';
 
+    const preferredCityOrder = ['Tokyo', 'Hakone', 'Kyoto', 'Hiroshima', 'Osaka'];
+    function sortCitiesByPreference(cities) {
+      return [...cities].sort((a, b) => {
+        const aIndex = preferredCityOrder.indexOf(a);
+        const bIndex = preferredCityOrder.indexOf(b);
+        const aRank = aIndex === -1 ? Number.MAX_SAFE_INTEGER : aIndex;
+        const bRank = bIndex === -1 ? Number.MAX_SAFE_INTEGER : bIndex;
+        if (aRank !== bRank) return aRank - bRank;
+        return a.localeCompare(b);
+      });
+    }
+
     function loadRestaurants() {
       return fetch('restaurants.json')
         .then(response => response.ok ? response.json() : Promise.reject(response))
@@ -985,7 +997,7 @@
     }
 
     function buildRestaurantCityFilters() {
-      const cities = Array.from(new Set(restaurantsData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      const cities = sortCitiesByPreference(Array.from(new Set(restaurantsData.map(i => i.city || 'Unknown'))));
       restaurantCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
       cities.forEach(city => {
         const button = document.createElement('button');
@@ -1024,7 +1036,7 @@
         cityGroups[city][suburb].push(item);
       });
 
-      Object.keys(cityGroups).sort().forEach(city => {
+      sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
@@ -1234,7 +1246,7 @@
     }
 
     function buildAttractionCityFilters() {
-      const cities = Array.from(new Set(attractionsData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      const cities = sortCitiesByPreference(Array.from(new Set(attractionsData.map(i => i.city || 'Unknown'))));
       attractionCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
       cities.forEach(city => {
         const button = document.createElement('button');
@@ -1269,7 +1281,7 @@
         cityGroups[city].push(item);
       });
 
-      Object.keys(cityGroups).sort().forEach(city => {
+      sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
@@ -1364,7 +1376,7 @@
     }
 
     function buildAnimalCafeCityFilters() {
-      const cities = Array.from(new Set(animalCafesData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      const cities = sortCitiesByPreference(Array.from(new Set(animalCafesData.map(i => i.city || 'Unknown'))));
       animalCafeCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
       cities.forEach(city => {
         const button = document.createElement('button');
@@ -1397,7 +1409,7 @@
         cityGroups[city] = cityGroups[city] || [];
         cityGroups[city].push(item);
       });
-      Object.keys(cityGroups).sort().forEach(city => {
+      sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
@@ -1468,7 +1480,7 @@
     }
 
     function buildFullDataFilters() {
-      const cities = Array.from(new Set(fullData.map(i => i.city || 'Unknown'))).sort((a, b) => a.localeCompare(b));
+      const cities = sortCitiesByPreference(Array.from(new Set(fullData.map(i => i.city || 'Unknown'))));
       fullDataCityFilters.innerHTML = '<button class="filter-button active" data-city="All" type="button">All cities</button>';
       cities.forEach(city => {
         const button = document.createElement('button');
@@ -1605,7 +1617,7 @@
       // Define the desired group order
       const groupOrder = ['Accommodation', 'Restaurants', 'Ideas & Attractions', 'Animal Cafes'];
 
-      Object.keys(cityGroups).sort().forEach(city => {
+      sortCitiesByPreference(Object.keys(cityGroups)).forEach(city => {
         const cityDetails = document.createElement('details');
         cityDetails.className = 'idea-group';
         cityDetails.open = false;
