@@ -420,12 +420,20 @@
         <p class="submit-help">Submit from your phone while travelling. It will appear on map and tabs immediately.</p>
         <form id="submitSpotForm" class="submit-grid">
           <div class="submit-field">
+            <label for="spotName">Name</label>
+            <input id="spotName" type="text" placeholder="e.g. Uobei Shibuya Dogenzaka" required />
+          </div>
+          <div class="submit-field">
             <label for="spotCategory">Category</label>
             <select id="spotCategory" required>
               <option value="Restaurant">Restaurant</option>
               <option value="Attraction">Attraction</option>
               <option value="Animal Cafe">Animal Cafe</option>
             </select>
+          </div>
+          <div class="submit-field">
+            <label for="spotSubCategory">Sub-category</label>
+            <select id="spotSubCategory" required></select>
           </div>
           <div class="submit-field">
             <label for="spotCostTier">Approx cost</label>
@@ -463,6 +471,19 @@
             <label for="spotGoogleMapLink">Google Map Link</label>
             <input id="spotGoogleMapLink" type="url" placeholder="Paste Google Maps link" required />
             <span class="submit-help">Tip: copy the share link from Google Maps. If coordinates are missing, city center is used.</span>
+          </div>
+          <div class="submit-field">
+            <label for="spotApproxWait">Approx wait (optional)</label>
+            <input id="spotApproxWait" type="text" placeholder="e.g. 15-30 mins" />
+          </div>
+          <div class="submit-field">
+            <label for="spotBooking">Booking requirement (optional)</label>
+            <select id="spotBooking">
+              <option value="">Not specified</option>
+              <option value="Walk-in">Walk-in</option>
+              <option value="Recommended">Recommended</option>
+              <option value="Required">Required</option>
+            </select>
           </div>
           <div class="submit-field full submit-actions">
             <button class="submit-btn" type="submit">Submit Spot</button>
@@ -908,6 +929,14 @@
     let selectedFullDataCity = 'All';
     const submitSpotForm = document.getElementById('submitSpotForm');
     const submitSpotMessage = document.getElementById('submitSpotMessage');
+    const spotCategoryEl = document.getElementById('spotCategory');
+    const spotSubCategoryEl = document.getElementById('spotSubCategory');
+
+    const submitSubCategoryOptions = {
+      Restaurant: ['Cheap Eats', 'Family Friendly', 'Hidden Gem', 'High End', 'Local Cuisine Specialty', 'Vegetarian / Vegan Friendly'],
+      Attraction: ['Top 10', 'Hidden Gems', 'Museum', 'Temple / Shrine', 'Nature', 'Experience'],
+      'Animal Cafe': ['Cats', 'Dogs', 'Otters', 'Capybaras', 'Birds', 'Mixed Animals']
+    };
 
     const cityFallbackCoords = {
       Tokyo: { lat: 35.6762, lng: 139.6503 },
@@ -917,8 +946,8 @@
       Osaka: { lat: 34.6937, lng: 135.5023 }
     };
     const localSubmissionsKey = 'japanHolidayUserSubmissions';
-    const SUPABASE_URL = 'https://gpthkqjhyxhycjxxpxin.supabase.co/rest/v1/';
-    const SUPABASE_ANON_KEY = 'sb_publishable_AA1bbV3u2PHZBSfo1NZD1g_WGqCQ3OQ';
+    const SUPABASE_URL = 'https://gpthkqjhyxhycjxxpxin.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdwdGhrcWpoeXhoeWNqeHhweGluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NTk0MDAsImV4cCI6MjA5NzUzNTQwMH0.2-QexN5BUvo_SEdqe4oWsDp_YseNcaFQyc0wB-FaUSQ';
     const SUPABASE_TABLE = 'submitted_spots';
     let supabaseClient = null;
     let supabaseChannel = null;
@@ -960,6 +989,19 @@
         .split(' ')
         .map(word => word ? word.charAt(0).toUpperCase() + word.slice(1) : word)
         .join(' ');
+    }
+
+    function refreshSubmitSubCategoryOptions() {
+      if (!spotCategoryEl || !spotSubCategoryEl) return;
+      const category = spotCategoryEl.value;
+      const options = submitSubCategoryOptions[category] || ['User Submission'];
+      spotSubCategoryEl.innerHTML = '';
+      options.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        spotSubCategoryEl.appendChild(option);
+      });
     }
 
     function loadRestaurants() {
@@ -1045,12 +1087,16 @@
     function rowToSubmissionEntry(row) {
       const payload = {
         category: row.category,
+        name: row.name || row.speciality || 'User Submission',
+        subCategory: row.sub_category || row.speciality || 'User Submission',
         costTier: row.cost_tier || 1,
         city: row.city,
         suburb: row.suburb || '',
         speciality: row.speciality || '',
         description: row.description || '',
-        googleMapsLink: row.google_maps_link || ''
+        googleMapsLink: row.google_maps_link || '',
+        approxWait: row.approx_wait || '',
+        bookingRequirement: row.booking_requirement || ''
       };
       return createSubmittedEntry(payload, {
         id: row.client_submission_key || row.id || `remote-${Date.now()}`,
@@ -1098,12 +1144,16 @@
       const row = {
         client_submission_key: entry.submissionKey || entry.id,
         category: payload.category,
+        name: payload.name || '',
+        sub_category: payload.subCategory || '',
         cost_tier: Number(payload.costTier) || 1,
         city: payload.city,
         suburb: payload.suburb || '',
         speciality: payload.speciality || '',
         description: payload.description || '',
         google_maps_link: payload.googleMapsLink || '',
+        approx_wait: payload.approxWait || '',
+        booking_requirement: payload.bookingRequirement || '',
         lat: entry.coordinates?.lat ?? null,
         lng: entry.coordinates?.lng ?? null
       };
@@ -1129,18 +1179,19 @@
         link: payload.googleMapsLink,
         approx_cost: cost,
         cost_approx: cost,
+        booking_requirement: payload.bookingRequirement || '',
         source: 'User Submission',
-        title: payload.speciality || `${payload.category} submission`
+        title: payload.name || `${payload.category} submission`
       };
 
       if (payload.category === 'Restaurant') {
         return {
           ...base,
           type: 'Restaurant',
-          category: 'User Submission',
-          name: payload.speciality || 'User Submitted Restaurant',
-          cuisine_type: payload.speciality || 'General',
-          approx_wait_time_walkin: '',
+          category: payload.subCategory || 'User Submission',
+          name: payload.name || 'User Submitted Restaurant',
+          cuisine_type: payload.speciality || payload.subCategory || 'General',
+          approx_wait_time_walkin: payload.approxWait || '',
           table_for_9_likelihood: ''
         };
       }
@@ -1149,19 +1200,19 @@
         return {
           ...base,
           type: 'Attraction',
-          category: 'User Submission',
-          name: payload.speciality || 'User Submitted Attraction',
-          booking_requirement: 'Unknown'
+          category: payload.subCategory || 'User Submission',
+          name: payload.name || 'User Submitted Attraction',
+          booking_requirement: payload.bookingRequirement || 'Unknown'
         };
       }
 
       return {
         ...base,
         type: 'Animal Cafe',
-        category: 'User Submission',
-        name: payload.speciality || 'User Submitted Animal Cafe',
-        animals: payload.speciality ? [payload.speciality] : [],
-        booking_requirement: 'Unknown'
+        category: payload.subCategory || 'User Submission',
+        name: payload.name || 'User Submitted Animal Cafe',
+        animals: payload.subCategory ? [payload.subCategory] : (payload.speciality ? [payload.speciality] : []),
+        booking_requirement: payload.bookingRequirement || 'Unknown'
       };
     }
 
@@ -2180,23 +2231,31 @@
     });
 
     if (submitSpotForm) {
+      refreshSubmitSubCategoryOptions();
+      if (spotCategoryEl) {
+        spotCategoryEl.addEventListener('change', refreshSubmitSubCategoryOptions);
+      }
       submitSpotForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        const name = (document.getElementById('spotName').value || '').trim();
         const category = document.getElementById('spotCategory').value;
+        const subCategory = document.getElementById('spotSubCategory').value;
         const costTier = document.getElementById('spotCostTier').value;
         const city = document.getElementById('spotCity').value;
         const suburb = (document.getElementById('spotSuburb').value || '').trim();
         const speciality = (document.getElementById('spotSpeciality').value || '').trim();
         const description = (document.getElementById('spotDescription').value || '').trim();
         const googleMapsLink = (document.getElementById('spotGoogleMapLink').value || '').trim();
+        const approxWait = (document.getElementById('spotApproxWait').value || '').trim();
+        const bookingRequirement = (document.getElementById('spotBooking').value || '').trim();
 
-        if (!speciality || !description || !googleMapsLink) {
+        if (!name || !subCategory || !speciality || !description || !googleMapsLink) {
           submitSpotMessage.textContent = 'Please fill in all required fields.';
           submitSpotMessage.classList.add('error');
           return;
         }
 
-        const payload = { category, costTier, city, suburb, speciality, description, googleMapsLink };
+        const payload = { name, category, subCategory, costTier, city, suburb, speciality, description, googleMapsLink, approxWait, bookingRequirement };
         const entry = createSubmittedEntry(payload);
         applySubmissionEntry(entry, true);
         if (supabaseClient) {
@@ -2214,6 +2273,7 @@
           submitSpotMessage.classList.remove('error');
         }
         submitSpotForm.reset();
+        refreshSubmitSubCategoryOptions();
       });
     }
 
