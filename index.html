@@ -199,7 +199,9 @@
     @media (max-width: 767px) {
       header h1 { font-size: clamp(2rem, 8.5vw, 2.6rem); line-height: 1; white-space: nowrap; padding: 2px 0; }
       .tabs { display: none !important; }
-      .panel { padding-bottom: 0; }
+      .main { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+      .panel { padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+      #submit-panel { padding-bottom: calc(140px + env(safe-area-inset-bottom)); }
       #map-panel { min-height: calc(100vh - 70px); }
       .map-wrapper { min-height: calc(100vh - 70px); }
       #map { min-height: calc(100vh - 70px); }
