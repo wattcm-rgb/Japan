@@ -25,7 +25,7 @@
     header { padding: 18px 22px 14px; background: #fff6f8; color: #7d2f57; }
     header h1 { margin: 0; font-size: 1.8rem; line-height: 1.05; letter-spacing: -.04em; font-weight: 800; color: #7d2f57; }
     .main { max-width: 1380px; margin: 0 auto; padding: 12px 22px 22px; }
-    .tabs { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
+    .tabs { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 12px; margin-bottom: 18px; }
     .tab-button { border: 1px solid #f1d5e0; background: #fff6f8; color: #7d2f57; padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: all .2s ease; font-weight: 600; text-align: center; }
     .tab-button.active { background: #d880a2; color: #fff; border-color: #d880a2; }
     .panel { display: none; gap: 12px; }
@@ -83,6 +83,29 @@
     .list-controls input { width: 100%; max-width: 480px; min-width: 220px; border: 1px solid #f2d6e0; border-radius: 999px; padding: 12px 16px; background: #fff7fb; color:#3b2035; }
     .list-grid { display: grid; gap: 16px; }
     .idea-card { background: #fff7fb; border-radius: 24px; border: 1px solid #f2d6e0; padding: 18px; display: grid; gap: 12px; box-shadow: 0 10px 30px rgba(158,83,110,.06); }
+    .submit-card { background: #fff7fb; border-radius: 24px; border: 1px solid #f2d6e0; padding: 18px; display: grid; gap: 14px; box-shadow: 0 10px 30px rgba(158,83,110,.06); max-width: 860px; }
+    .submit-card h2 { margin: 0; color: #4a214d; font-size: 1.25rem; }
+    .submit-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .submit-field { display: grid; gap: 6px; }
+    .submit-field.full { grid-column: 1 / -1; }
+    .submit-field label { font-weight: 700; color: #5f2c50; font-size: .92rem; }
+    .submit-field input, .submit-field select, .submit-field textarea {
+      width: 100%;
+      border: 1px solid #f2d6e0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      color: #3b2035;
+      font-family: inherit;
+      font-size: .95rem;
+    }
+    .submit-field textarea { min-height: 88px; resize: vertical; }
+    .submit-help { color: #6f4a63; font-size: .85rem; }
+    .submit-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .submit-btn { border: 1px solid #d880a2; background: #d880a2; color: #fff; padding: 12px 18px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: background .2s ease, transform .2s ease; }
+    .submit-btn:hover { background: #b9376c; transform: translateY(-1px); }
+    .submit-message { font-size: .92rem; color: #1f6f3b; }
+    .submit-message.error { color: #a33b53; }
     .restaurant-fields { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
     .restaurant-field { background: #fff; border-radius: 12px; padding: 8px 12px; color:#6f4a63; font-weight:700; font-size:0.9rem; border:1px solid #f2d6e0; }
     .restaurant-desc { margin: 10px 0 0; color: #3a4b6a; line-height: 1.7; min-height: 44px; }
@@ -170,6 +193,7 @@
     @media(max-width:980px){ .tabs { grid-template-columns: 1fr; } }
     @media(max-width:820px){ .restaurant-filters-top { flex-direction: column; align-items: stretch; } .filter-buttons { max-height: none; } }
     @media(max-width:740px){ .idea-actions { flex-direction: column; align-items: stretch; } .category-toggle { display: inline-flex; } .filter-buttons { max-height: 0; overflow: hidden; transition: max-height .28s ease; width: 100%; } .filter-buttons.open { max-height: 360px; } }
+    @media(max-width:740px){ .submit-grid { grid-template-columns: 1fr; } }
     
     /* Mobile Bottom Navigation */
     @media (max-width: 767px) {
@@ -200,7 +224,7 @@
       padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
       z-index: 1001;
       box-shadow: 0 -4px 20px rgba(158,83,110,.12);
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 4px;
     }
     @media (max-width: 767px) {
@@ -272,6 +296,7 @@
       <button class="tab-button" data-target="attractions-panel" id="attractionsTab">Attractions</button>
       <button class="tab-button" data-target="animalcafes-panel" id="animalCafesTab">Animal Cafes</button>
       <button class="tab-button" data-target="fulldata-panel" id="fullDataTab">Full data</button>
+      <button class="tab-button" data-target="submit-panel" id="submitTab">Submit</button>
     </div>
 
     <div class="panel active" id="map-panel">
@@ -388,6 +413,64 @@
       </div>
       <div class="list-grid" id="fullDataList"></div>
     </div>
+
+    <div class="panel" id="submit-panel">
+      <div class="submit-card">
+        <h2>Submit A New Spot</h2>
+        <p class="submit-help">Submit from your phone while travelling. It will appear on map and tabs immediately.</p>
+        <form id="submitSpotForm" class="submit-grid">
+          <div class="submit-field">
+            <label for="spotCategory">Category</label>
+            <select id="spotCategory" required>
+              <option value="Restaurant">Restaurant</option>
+              <option value="Attraction">Attraction</option>
+              <option value="Animal Cafe">Animal Cafe</option>
+            </select>
+          </div>
+          <div class="submit-field">
+            <label for="spotCostTier">Approx cost</label>
+            <select id="spotCostTier" required>
+              <option value="1">£</option>
+              <option value="2">££</option>
+              <option value="3">£££</option>
+              <option value="4">££££</option>
+              <option value="5">£££££</option>
+            </select>
+          </div>
+          <div class="submit-field">
+            <label for="spotCity">City</label>
+            <select id="spotCity" required>
+              <option value="Tokyo">Tokyo</option>
+              <option value="Hakone">Hakone</option>
+              <option value="Kyoto">Kyoto</option>
+              <option value="Hiroshima">Hiroshima</option>
+              <option value="Osaka">Osaka</option>
+            </select>
+          </div>
+          <div class="submit-field">
+            <label for="spotSuburb">Suburb / Area</label>
+            <input id="spotSuburb" type="text" placeholder="e.g. Asakusa" />
+          </div>
+          <div class="submit-field full">
+            <label for="spotSpeciality">Speciality</label>
+            <input id="spotSpeciality" type="text" placeholder="e.g. Matcha parfait, ramen, owl interaction" required />
+          </div>
+          <div class="submit-field full">
+            <label for="spotDescription">Description</label>
+            <textarea id="spotDescription" placeholder="Describe what it is and why it's good" required></textarea>
+          </div>
+          <div class="submit-field full">
+            <label for="spotGoogleMapLink">Google Map Link</label>
+            <input id="spotGoogleMapLink" type="url" placeholder="Paste Google Maps link" required />
+            <span class="submit-help">Tip: copy the share link from Google Maps. If coordinates are missing, city center is used.</span>
+          </div>
+          <div class="submit-field full submit-actions">
+            <button class="submit-btn" type="submit">Submit Spot</button>
+            <span id="submitSpotMessage" class="submit-message" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </div>
   </main>
 
   <!-- Mobile Bottom Navigation -->
@@ -408,12 +491,17 @@
       <span class="icon">📋</span>
       <span>All</span>
     </button>
+    <button class="mobile-nav-btn" data-target="submit-panel">
+      <span class="icon">➕</span>
+      <span>Add</span>
+    </button>
   </nav>
   
   <!-- Floating Action Button -->
   <button class="fab hidden" id="fabMap" aria-label="View map">🗺️</button>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
     const accommodations = [
       {
@@ -703,31 +791,37 @@
 
     function addRestaurantMarkers() {
       restaurantsData.forEach(item => {
-        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Restaurant') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
-        bindHoverPopup(marker);
-        marker.addTo(restaurantsLayer);
-        item.marker = marker;
+        if (!item.marker) {
+          const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Restaurant') });
+          marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
+          bindHoverPopup(marker);
+          marker.addTo(restaurantsLayer);
+          item.marker = marker;
+        }
       });
     }
 
     function addAttractionMarkers() {
       attractionsData.forEach(item => {
-        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Attraction') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
-        bindHoverPopup(marker);
-        marker.addTo(attractionsLayer);
-        item.marker = marker;
+        if (!item.marker) {
+          const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Attraction') });
+          marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
+          bindHoverPopup(marker);
+          marker.addTo(attractionsLayer);
+          item.marker = marker;
+        }
       });
     }
 
     function addAnimalCafeMarkers() {
       animalCafesData.forEach(item => {
-        const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Animal Cafe') });
-        marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
-        bindHoverPopup(marker);
-        marker.addTo(animalCafesLayer);
-        item.marker = marker;
+        if (!item.marker) {
+          const marker = L.marker([item.coordinates.lat, item.coordinates.lng], { icon: createIcon('Animal Cafe') });
+          marker.bindPopup(buildPopup(item), { closeButton:false, offset:[0,-24], autoPan:false });
+          bindHoverPopup(marker);
+          marker.addTo(animalCafesLayer);
+          item.marker = marker;
+        }
       });
     }
 
@@ -812,6 +906,23 @@
     let selectedFullDataPrimaryCategory = 'All';
     let selectedFullDataSubCategory = 'All';
     let selectedFullDataCity = 'All';
+    const submitSpotForm = document.getElementById('submitSpotForm');
+    const submitSpotMessage = document.getElementById('submitSpotMessage');
+
+    const cityFallbackCoords = {
+      Tokyo: { lat: 35.6762, lng: 139.6503 },
+      Hakone: { lat: 35.2323, lng: 139.1069 },
+      Kyoto: { lat: 35.0116, lng: 135.7681 },
+      Hiroshima: { lat: 34.3853, lng: 132.4553 },
+      Osaka: { lat: 34.6937, lng: 135.5023 }
+    };
+    const localSubmissionsKey = 'japanHolidayUserSubmissions';
+    const SUPABASE_URL = 'https://gpthkqjhyxhycjxxpxin.supabase.co/rest/v1/';
+    const SUPABASE_ANON_KEY = 'sb_publishable_AA1bbV3u2PHZBSfo1NZD1g_WGqCQ3OQ';
+    const SUPABASE_TABLE = 'submitted_spots';
+    let supabaseClient = null;
+    let supabaseChannel = null;
+    const seenSubmissionKeys = new Set();
 
     const preferredCityOrder = ['Tokyo', 'Hakone', 'Kyoto', 'Hiroshima', 'Osaka'];
     const fullDataPrimaryCategories = ['Accomodation', 'Restaurants', 'Attractions', 'Ideas', 'Animal Cafes'];
@@ -884,6 +995,212 @@
           restaurantsList.innerHTML = '<p style="color:#70426b;">Restaurant data is unavailable. Please make sure <strong>restaurants.json</strong> is served from the same folder.</p>';
           return null;
         });
+    }
+
+    function extractCoordsFromGoogleMapsLink(url) {
+      if (!url) return null;
+      const text = String(url);
+      let match = text.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+      match = text.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+      match = text.match(/[?&](?:q|query)=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+      if (match) return { lat: Number(match[1]), lng: Number(match[2]) };
+      return null;
+    }
+
+    function saveLocalSubmission(entry) {
+      try {
+        const existing = JSON.parse(localStorage.getItem(localSubmissionsKey) || '[]');
+        const { marker, ...serializableEntry } = entry;
+        existing.push(serializableEntry);
+        localStorage.setItem(localSubmissionsKey, JSON.stringify(existing));
+      } catch (error) {
+        console.warn('Unable to save local submission:', error);
+      }
+    }
+
+    function getLocalSubmissions() {
+      try {
+        return JSON.parse(localStorage.getItem(localSubmissionsKey) || '[]');
+      } catch (error) {
+        console.warn('Unable to read local submissions:', error);
+        return [];
+      }
+    }
+
+    function initSupabaseClient() {
+      try {
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !window.supabase || !window.supabase.createClient) {
+          return null;
+        }
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return supabaseClient;
+      } catch (error) {
+        console.warn('Unable to initialize Supabase:', error);
+        return null;
+      }
+    }
+
+    function rowToSubmissionEntry(row) {
+      const payload = {
+        category: row.category,
+        costTier: row.cost_tier || 1,
+        city: row.city,
+        suburb: row.suburb || '',
+        speciality: row.speciality || '',
+        description: row.description || '',
+        googleMapsLink: row.google_maps_link || ''
+      };
+      return createSubmittedEntry(payload, {
+        id: row.client_submission_key || row.id || `remote-${Date.now()}`,
+        submissionKey: row.client_submission_key || row.id || null,
+        coordinates: {
+          lat: Number(row.lat ?? cityFallbackCoords[row.city]?.lat ?? 35.6762),
+          lng: Number(row.lng ?? cityFallbackCoords[row.city]?.lng ?? 139.6503)
+        }
+      });
+    }
+
+    async function loadSupabaseSubmissions() {
+      if (!supabaseClient) return;
+      const { data, error } = await supabaseClient
+        .from(SUPABASE_TABLE)
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (error) {
+        console.warn('Unable to load Supabase submissions:', error);
+        return;
+      }
+      (data || []).forEach(row => {
+        const entry = rowToSubmissionEntry(row);
+        applySubmissionEntry(entry, false);
+      });
+    }
+
+    function subscribeToSupabaseSubmissions() {
+      if (!supabaseClient || supabaseChannel) return;
+      supabaseChannel = supabaseClient
+        .channel('submitted-spots-realtime')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: SUPABASE_TABLE
+        }, (payload) => {
+          const entry = rowToSubmissionEntry(payload.new || {});
+          applySubmissionEntry(entry, false);
+        })
+        .subscribe();
+    }
+
+    async function saveSubmissionToSupabase(entry, payload) {
+      if (!supabaseClient) return { data: null, error: null };
+      const row = {
+        client_submission_key: entry.submissionKey || entry.id,
+        category: payload.category,
+        cost_tier: Number(payload.costTier) || 1,
+        city: payload.city,
+        suburb: payload.suburb || '',
+        speciality: payload.speciality || '',
+        description: payload.description || '',
+        google_maps_link: payload.googleMapsLink || '',
+        lat: entry.coordinates?.lat ?? null,
+        lng: entry.coordinates?.lng ?? null
+      };
+      const { data, error } = await supabaseClient.from(SUPABASE_TABLE).insert(row).select().single();
+      return { data, error };
+    }
+
+    function createSubmittedEntry(payload, overrides = {}) {
+      const generatedId = `user-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      const id = overrides.id || generatedId;
+      const submissionKey = overrides.submissionKey || id;
+      const coords = overrides.coordinates || extractCoordsFromGoogleMapsLink(payload.googleMapsLink) || cityFallbackCoords[payload.city] || { lat: 35.6762, lng: 139.6503 };
+      const cost = '£'.repeat(Number(payload.costTier) || 1);
+      const base = {
+        id,
+        submissionKey,
+        city: payload.city,
+        suburb: payload.suburb,
+        description: payload.description,
+        detail: payload.description,
+        coordinates: { lat: coords.lat, lng: coords.lng },
+        google_maps_link: payload.googleMapsLink,
+        link: payload.googleMapsLink,
+        approx_cost: cost,
+        cost_approx: cost,
+        source: 'User Submission',
+        title: payload.speciality || `${payload.category} submission`
+      };
+
+      if (payload.category === 'Restaurant') {
+        return {
+          ...base,
+          type: 'Restaurant',
+          category: 'User Submission',
+          name: payload.speciality || 'User Submitted Restaurant',
+          cuisine_type: payload.speciality || 'General',
+          approx_wait_time_walkin: '',
+          table_for_9_likelihood: ''
+        };
+      }
+
+      if (payload.category === 'Attraction') {
+        return {
+          ...base,
+          type: 'Attraction',
+          category: 'User Submission',
+          name: payload.speciality || 'User Submitted Attraction',
+          booking_requirement: 'Unknown'
+        };
+      }
+
+      return {
+        ...base,
+        type: 'Animal Cafe',
+        category: 'User Submission',
+        name: payload.speciality || 'User Submitted Animal Cafe',
+        animals: payload.speciality ? [payload.speciality] : [],
+        booking_requirement: 'Unknown'
+      };
+    }
+
+    function applySubmissionEntry(entry, persist) {
+      const key = entry.submissionKey || entry.id;
+      if (key && seenSubmissionKeys.has(key)) return;
+      if (key) seenSubmissionKeys.add(key);
+
+      if (entry.type === 'Restaurant') {
+        restaurantsData.push(entry);
+        addRestaurantMarkers();
+        buildRestaurantCityFilters();
+        buildRestaurantCategoryFilters();
+        renderRestaurants();
+      } else if (entry.type === 'Attraction') {
+        attractionsData.push(entry);
+        addAttractionMarkers();
+        buildAttractionCityFilters();
+        buildAttractionCategoryFilters();
+        renderAttractions();
+      } else if (entry.type === 'Animal Cafe') {
+        animalCafesData.push(entry);
+        addAnimalCafeMarkers();
+        buildAnimalCafeCityFilters();
+        buildAnimalCafeCategoryFilters();
+        renderAnimalCafes();
+      }
+
+      buildFullData();
+      renderFullData();
+
+      if (persist) {
+        saveLocalSubmission(entry);
+      }
+    }
+
+    function hydrateLocalSubmissions() {
+      const localEntries = getLocalSubmissions();
+      localEntries.forEach(entry => applySubmissionEntry(entry, false));
     }
 
     function groupIdeasByArea(ideas) {
@@ -1838,7 +2155,13 @@
     }
 
     renderIdeas();
-    Promise.allSettled([loadRestaurants(), loadAttractions(), loadAnimalCafes()]).then(() => {
+    Promise.allSettled([loadRestaurants(), loadAttractions(), loadAnimalCafes()]).then(async () => {
+      hydrateLocalSubmissions();
+      initSupabaseClient();
+      if (supabaseClient) {
+        await loadSupabaseSubmissions();
+        subscribeToSupabaseSubmissions();
+      }
       buildFullData();
       renderFullData();
       if (fullDataCategoryToggle) {
@@ -1855,6 +2178,44 @@
         });
       }
     });
+
+    if (submitSpotForm) {
+      submitSpotForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const category = document.getElementById('spotCategory').value;
+        const costTier = document.getElementById('spotCostTier').value;
+        const city = document.getElementById('spotCity').value;
+        const suburb = (document.getElementById('spotSuburb').value || '').trim();
+        const speciality = (document.getElementById('spotSpeciality').value || '').trim();
+        const description = (document.getElementById('spotDescription').value || '').trim();
+        const googleMapsLink = (document.getElementById('spotGoogleMapLink').value || '').trim();
+
+        if (!speciality || !description || !googleMapsLink) {
+          submitSpotMessage.textContent = 'Please fill in all required fields.';
+          submitSpotMessage.classList.add('error');
+          return;
+        }
+
+        const payload = { category, costTier, city, suburb, speciality, description, googleMapsLink };
+        const entry = createSubmittedEntry(payload);
+        applySubmissionEntry(entry, true);
+        if (supabaseClient) {
+          const { error } = await saveSubmissionToSupabase(entry, payload);
+          if (error) {
+            console.warn('Supabase save failed, local save kept:', error);
+            submitSpotMessage.textContent = 'Saved on this device. Shared sync failed right now.';
+            submitSpotMessage.classList.remove('error');
+          } else {
+            submitSpotMessage.textContent = 'Spot submitted and shared with everyone.';
+            submitSpotMessage.classList.remove('error');
+          }
+        } else {
+          submitSpotMessage.textContent = 'Spot submitted and added to map + tabs.';
+          submitSpotMessage.classList.remove('error');
+        }
+        submitSpotForm.reset();
+      });
+    }
 
     const legButtons = document.querySelectorAll('#legFilters .filter-button');
     legButtons.forEach(button => {
